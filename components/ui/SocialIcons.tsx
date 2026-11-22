@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Github, Linkedin, FileText } from "lucide-react";
 import HoverLink from "./HoverLink";
 import { sounds } from "@/lib/sound";
+import { PERSONAL } from "@/data/personal";
 
 interface SocialIconsProps {
   onOpenResume?: () => void;
@@ -78,7 +79,7 @@ export default function SocialIcons({ onOpenResume }: SocialIconsProps) {
 
           <div className="magnetic-icon w-10 h-10 flex items-center justify-center">
             <a
-              href="https://www.linkedin.com/in/aryany1/"
+              href={PERSONAL.links.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => sounds.playClick()}
