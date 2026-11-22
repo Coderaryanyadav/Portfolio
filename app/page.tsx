@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
-import WhatIDoSection from "@/components/sections/WhatIDoSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -26,6 +25,18 @@ export default function Home() {
   const [resumeOpen, setResumeOpen] = useState(false);
   const [activeCaseStudyProject, setActiveCaseStudyProject] = useState<Project | null>(null);
 
+  // Global ⌘K keyboard listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setTerminalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <SmoothScroll>
       {/* Signature moncy.dev Interactive Preloader with Bouncing Ball Minigame & Portal Reveal */}
@@ -45,7 +56,7 @@ export default function Home() {
           onOpenResume={() => setResumeOpen(true)}
         />
 
-        {/* Hero / Landing Section */}
+        {/* Hero Section */}
         <HeroSection />
 
         {/* Moncy-style Infinite Continuous Ticker Ribbon #1 */}
@@ -61,9 +72,6 @@ export default function Home() {
           direction="left"
           speedSeconds={32}
         />
-
-        {/* Moncy-style Signature "WHAT I DO" Discipline Section */}
-        <WhatIDoSection />
 
         {/* Phase 01: Identity & About */}
         <AboutSection />
@@ -88,7 +96,7 @@ export default function Home() {
         {/* Phase 03: Technical Ecosystem */}
         <SkillsSection />
 
-        {/* Phase 04: Engineering Journey & Evolution */}
+        {/* Phase 04: Engineering Journey */}
         <JourneySection />
 
         {/* Phase 05: GitHub Audited Repositories */}
@@ -113,7 +121,7 @@ export default function Home() {
           onClose={() => setResumeOpen(false)}
         />
 
-        {/* Case Study Modal from Terminal or Deep Links */}
+        {/* Single Root Case Study Modal */}
         <CaseStudyModal
           project={activeCaseStudyProject}
           onClose={() => setActiveCaseStudyProject(null)}

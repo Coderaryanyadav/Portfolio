@@ -4,14 +4,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Code2, Terminal, Shield, Database, Cpu, Wrench, Sparkles, Check } from "lucide-react";
 import { SKILL_CATEGORIES } from "@/data/skills";
+import { sounds } from "@/lib/sound";
 
 const categoryIcons: Record<string, React.ReactNode> = {
-  "PROGRAMMING LANGUAGES": <Terminal size={16} className="text-lime" />,
-  "FRONTEND & MOBILE": <Code2 size={16} className="text-lime" />,
-  "BACKEND & DATABASES": <Database size={16} className="text-lime" />,
-  "AI & OFFLINE SYSTEMS": <Cpu size={16} className="text-lime" />,
-  "SECURITY & WEB3": <Shield size={16} className="text-lime" />,
-  "TOOLS & DEPLOYMENT": <Wrench size={16} className="text-lime" />,
+  "PROGRAMMING LANGUAGES": <Terminal size={16} className="text-cyan-400" />,
+  "FRONTEND & MOBILE": <Code2 size={16} className="text-cyan-400" />,
+  "BACKEND & DATABASES": <Database size={16} className="text-cyan-400" />,
+  "AI & OFFLINE SYSTEMS": <Cpu size={16} className="text-cyan-400" />,
+  "SECURITY & WEB3": <Shield size={16} className="text-cyan-400" />,
+  "TOOLS & DEPLOYMENT": <Wrench size={16} className="text-cyan-400" />,
 };
 
 export default function SkillsSection() {
@@ -20,17 +21,23 @@ export default function SkillsSection() {
   const [inspectedSkill, setInspectedSkill] = useState(activeCategory.skills[0]);
 
   const handleCategoryChange = (idx: number) => {
+    sounds.playClick();
     setActiveCategoryIndex(idx);
     setInspectedSkill(SKILL_CATEGORIES[idx].skills[0]);
   };
 
+  const handleSelectSkill = (skill: typeof inspectedSkill) => {
+    sounds.playClick();
+    setInspectedSkill(skill);
+  };
+
   return (
-    <section id="skills" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#070709]">
+    <section id="skills" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#07070b]">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-lime uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-lime" />
+          <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
             <span>03 — Technical Capabilities</span>
           </div>
           <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white">
@@ -49,7 +56,7 @@ export default function SkillsSection() {
               onClick={() => handleCategoryChange(idx)}
               className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-mono text-xs transition-all ${
                 activeCategoryIndex === idx
-                  ? "bg-white/10 text-white border border-lime/40 shadow-[0_0_20px_rgba(198,255,77,0.15)]"
+                  ? "bg-cyan-500/15 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(0,210,255,0.2)] font-bold"
                   : "bg-white/[0.02] text-zinc-400 border border-white/5 hover:text-white hover:bg-white/5"
               }`}
             >
@@ -78,13 +85,13 @@ export default function SkillsSection() {
                 return (
                   <motion.button
                     key={skill.name}
-                    onClick={() => setInspectedSkill(skill)}
+                    onClick={() => handleSelectSkill(skill)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`text-left p-4 rounded-xl border transition-all ${
                       isSelected
-                        ? "bg-[#141418] border-lime/60 shadow-[0_0_25px_rgba(198,255,77,0.1)]"
-                        : "bg-[#0b0b0e] border-white/5 hover:border-white/15"
+                        ? "bg-[#101422] border-cyan-400 shadow-[0_0_25px_rgba(0,210,255,0.2)]"
+                        : "bg-[#090b12] border-white/5 hover:border-white/15"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -94,7 +101,7 @@ export default function SkillsSection() {
                       <span
                         className={`font-mono text-[10px] px-2 py-0.5 rounded ${
                           skill.level === "Core"
-                            ? "bg-lime/10 text-lime border border-lime/30"
+                            ? "bg-cyan-500/15 text-cyan-400 border border-cyan-500/40"
                             : "bg-white/5 text-zinc-400 border border-white/10"
                         }`}
                       >
@@ -111,13 +118,13 @@ export default function SkillsSection() {
           </div>
 
           {/* Right: Detailed Telemetry Inspector Card */}
-          <div className="lg:col-span-5 bg-[#0e0e13] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="lg:col-span-5 bg-[#090b14] border border-cyan-500/25 rounded-2xl p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                <Sparkles size={13} className="text-lime" />
+                <Sparkles size={13} className="text-cyan-400" />
                 Technical Telemetry
               </span>
-              <span className="font-mono text-xs px-2 py-0.5 rounded bg-lime/10 text-lime border border-lime/20">
+              <span className="font-mono text-xs px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
                 Verified
               </span>
             </div>
@@ -152,7 +159,7 @@ export default function SkillsSection() {
                         key={proj}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 font-mono text-xs text-zinc-200"
                       >
-                        <Check size={12} className="text-lime" />
+                        <Check size={12} className="text-cyan-400" />
                         <span>{proj}</span>
                       </span>
                     ))}

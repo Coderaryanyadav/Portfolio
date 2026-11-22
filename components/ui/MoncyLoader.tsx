@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { sounds } from "@/lib/sound";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 interface MoncyLoaderProps {
   onComplete?: () => void;
@@ -14,28 +15,40 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
   const [hidden, setHidden] = useState(false);
   const buttonWrapRef = useRef<HTMLDivElement>(null);
 
-  // Simulated rapid smooth progress counter (0 -> 100)
   useEffect(() => {
+    // Lock body scroll while loader is visible
+    document.body.style.overflow = "hidden";
+
     let current = 0;
     const interval = setInterval(() => {
       if (current < 75) {
-        current += Math.floor(Math.random() * 6) + 3;
+        current += Math.floor(Math.random() * 8) + 4;
       } else if (current < 99) {
-        current += Math.floor(Math.random() * 4) + 1;
+        current += Math.floor(Math.random() * 5) + 2;
       } else {
         current = 100;
         clearInterval(interval);
         setTimeout(() => {
           setIsLoaded(true);
-        }, 300);
+        }, 200);
       }
       setPercent(Math.min(current, 100));
-    }, 45);
+    }, 35);
 
-    return () => clearInterval(interval);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+        triggerEnter();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
   }, []);
 
-  // Handle dynamic mouse tracking spotlight: sets --mouse-x and --mouse-y
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!buttonWrapRef.current) return;
     const rect = buttonWrapRef.current.getBoundingClientRect();
@@ -45,13 +58,14 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
     buttonWrapRef.current.style.setProperty("--mouse-y", `${y}px`);
   };
 
-  const handleEnterClick = () => {
+  const triggerEnter = () => {
     sounds.playClick();
     setIsClicked(true);
+    document.body.style.overflow = "unset";
     setTimeout(() => {
       setHidden(true);
       onComplete?.();
-    }, 900);
+    }, 800);
   };
 
   if (hidden) return null;
@@ -61,24 +75,37 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       className={`loading-screen ${isClicked ? "pointer-events-none" : ""}`}
       style={{
         opacity: isClicked ? 0 : 1,
-        transition: "opacity 0.6s ease-in-out 0.4s",
+        transition: "opacity 0.5s ease-in-out 0.35s",
       }}
     >
       {/* Top Header with Brand Title & Mini Bouncing Ball Game */}
       <div className="loading-header">
-        <a href="#hero" className="loader-title" data-cursor="disable">
-          ARYAN YADAV <span className="text-cyan-400 font-mono text-xs">/ 2026</span>
+        <a href="#hero" className="loader-title flex items-center gap-2">
+          <span>ARYAN YADAV</span>
+          <span className="text-cyan-400 font-mono text-xs px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30">
+            PORTFOLIO 2026
+          </span>
         </a>
 
-        {/* The Signature moncy.dev Mini Game: Bouncing ball across rhythmic gate lines */}
-        <div className={`loaderGame ${isClicked ? "loader-out" : ""}`}>
-          <div className="loaderGame-container">
-            <div className="loaderGame-in">
-              {[...Array(27)].map((_, i) => (
-                <div key={i} className="loaderGame-line" />
-              ))}
+        {/* Right side: Mini Bouncing Ball Game & Quick Skip Pill */}
+        <div className="flex items-center gap-6">
+          <button
+            onClick={triggerEnter}
+            className="font-mono text-xs text-zinc-400 hover:text-cyan-400 border border-white/10 hover:border-cyan-500/40 px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+          >
+            <span>Skip</span>
+            <ArrowRight size={12} />
+          </button>
+
+          <div className={`loaderGame ${isClicked ? "loader-out" : ""}`}>
+            <div className="loaderGame-container">
+              <div className="loaderGame-in">
+                {[...Array(27)].map((_, i) => (
+                  <div key={i} className="loaderGame-line" />
+                ))}
+              </div>
+              <div className="loaderGame-ball" />
             </div>
-            <div className="loaderGame-ball" />
           </div>
         </div>
       </div>
@@ -103,7 +130,7 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       <div
         ref={buttonWrapRef}
         onMouseMove={handleMouseMove}
-        onClick={handleEnterClick}
+        onClick={triggerEnter}
         className={`loading-wrap ${isClicked ? "loading-clicked" : ""}`}
       >
         <div className="loading-hover" />
@@ -125,7 +152,7 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       {/* Bottom Hint */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11px] text-zinc-500 uppercase tracking-widest flex items-center gap-2">
         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-        <span>{isLoaded ? "CLICK PILL TO EXPLORE" : "INITIALIZING SYSTEMS"}</span>
+        <span>{isLoaded ? "CLICK PILL OR PRESS ENTER TO EXPLORE" : "INITIALIZING SYSTEMS"}</span>
       </div>
     </div>
   );

@@ -5,9 +5,9 @@ import { Terminal, Shield, Cpu, CheckCircle2, ArrowRight } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
 
 const pillarIcons = [
-  <Terminal key="terminal" className="text-lime" size={24} />,
-  <Shield key="shield" className="text-lime" size={24} />,
-  <Cpu key="cpu" className="text-lime" size={24} />,
+  <Terminal key="terminal" className="text-cyan-400" size={24} />,
+  <Shield key="shield" className="text-cyan-400" size={24} />,
+  <Cpu key="cpu" className="text-cyan-400" size={24} />,
 ];
 
 export default function AboutSection() {
@@ -16,8 +16,8 @@ export default function AboutSection() {
       <div className="max-w-7xl mx-auto space-y-16 sm:space-y-24">
         {/* Section Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-lime uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-lime" />
+          <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
             <span>01 — Identity & Focus</span>
           </div>
           <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white max-w-4xl">
@@ -58,29 +58,29 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 bg-[#0e0e12] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="lg:col-span-5 bg-[#0e0e16] border border-cyan-500/20 rounded-2xl p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <span className="font-mono text-xs text-zinc-400 uppercase tracking-wider">
                 Engineering Blueprint
               </span>
-              <span className="font-mono text-xs text-lime">Active Focus</span>
+              <span className="font-mono text-xs text-cyan-400 font-bold">Active Focus</span>
             </div>
 
             <ul className="space-y-4 font-sans text-sm text-zinc-300">
               <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-lime shrink-0 mt-0.5" />
+                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-white font-medium">Zero-Leakage Local AI:</strong> Delivering intelligence on consumer hardware without sending private data to cloud endpoints.
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-lime shrink-0 mt-0.5" />
+                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-white font-medium">Resilient Mobile Architecture:</strong> Building offline-capable apps with local caching (Hive/SQLite) and optimistic sync.
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-lime shrink-0 mt-0.5" />
+                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-white font-medium">Provable Integrity:</strong> Using client-side SHA-256 signatures and smart contracts to protect certificates against fraud.
                 </span>
@@ -89,7 +89,7 @@ export default function AboutSection() {
 
             <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs font-mono text-zinc-400">
               <span>Location: Mumbai, IN</span>
-              <span className="text-lime">100% Code Verified</span>
+              <span className="text-cyan-400">100% Code Verified</span>
             </div>
           </div>
         </div>
@@ -109,14 +109,14 @@ export default function AboutSection() {
                 key={pillar.number}
                 whileHover={{ y: -6 }}
                 transition={{ duration: 0.25 }}
-                className="group relative bg-[#0d0d10] hover:bg-[#121216] border border-white/5 hover:border-lime/40 rounded-2xl p-8 flex flex-col justify-between transition-all duration-300"
+                className="group relative bg-[#090b12] hover:bg-[#0e111d] border border-white/5 hover:border-cyan-500/40 rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,210,255,0.15)]"
               >
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-3xl font-extrabold text-zinc-600 group-hover:text-lime transition-colors">
+                    <span className="font-mono text-3xl font-extrabold text-zinc-600 group-hover:text-cyan-400 transition-colors">
                       {pillar.number}
                     </span>
-                    <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-lime/30 flex items-center justify-center transition-colors">
+                    <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-cyan-500/40 flex items-center justify-center transition-colors">
                       {pillarIcons[idx]}
                     </div>
                   </div>
@@ -125,7 +125,7 @@ export default function AboutSection() {
                     <h4 className="font-heading font-bold text-2xl text-white tracking-tight">
                       {pillar.title}
                     </h4>
-                    <p className="font-mono text-xs text-lime">
+                    <p className="font-mono text-xs text-cyan-400">
                       {pillar.subtitle}
                     </p>
                   </div>

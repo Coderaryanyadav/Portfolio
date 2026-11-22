@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, Github, Linkedin, Mail } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
+import { sounds } from "@/lib/sound";
 
 export default function Footer() {
   const [time, setTime] = useState("");
@@ -25,16 +26,17 @@ export default function Footer() {
   }, []);
 
   const scrollToTop = () => {
+    sounds.playClick();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <footer className="border-t border-white/10 bg-[#060607] relative z-20 overflow-hidden">
+    <footer className="border-t border-white/10 bg-[#050608] relative z-20 overflow-hidden">
       {/* Top micro ticker */}
       <div className="border-b border-white/5 py-3 px-6 text-xs font-mono text-zinc-400 flex flex-wrap items-center justify-between gap-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
             <span className="text-zinc-300">Mumbai, India</span>
           </span>
           <span className="text-zinc-600">|</span>
@@ -50,7 +52,7 @@ export default function Footer() {
           {/* Brand & Identity */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-full bg-white/5 border border-lime/30 flex items-center justify-center font-mono text-xs font-bold text-lime">
+              <span className="w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/40 flex items-center justify-center font-mono text-xs font-bold text-cyan-400">
                 AY
               </span>
               <span className="font-heading font-bold text-lg text-white">Aryan Yadav</span>
@@ -65,27 +67,27 @@ export default function Footer() {
             <span className="text-zinc-500 uppercase tracking-widest block mb-2">Navigation</span>
             <ul className="space-y-2">
               <li>
-                <a href="#about" className="text-zinc-400 hover:text-lime transition-colors">
+                <a href="#about" onClick={() => sounds.playClick()} className="text-zinc-400 hover:text-cyan-400 transition-colors">
                   01. About & Pillars
                 </a>
               </li>
               <li>
-                <a href="#projects" className="text-zinc-400 hover:text-lime transition-colors">
+                <a href="#projects" onClick={() => sounds.playClick()} className="text-zinc-400 hover:text-cyan-400 transition-colors">
                   02. Featured Projects
                 </a>
               </li>
               <li>
-                <a href="#skills" className="text-zinc-400 hover:text-lime transition-colors">
+                <a href="#skills" onClick={() => sounds.playClick()} className="text-zinc-400 hover:text-cyan-400 transition-colors">
                   03. Technical Ecosystem
                 </a>
               </li>
               <li>
-                <a href="#journey" className="text-zinc-400 hover:text-lime transition-colors">
+                <a href="#journey" onClick={() => sounds.playClick()} className="text-zinc-400 hover:text-cyan-400 transition-colors">
                   04. Engineering Journey
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-zinc-400 hover:text-lime transition-colors">
+                <a href="#contact" onClick={() => sounds.playClick()} className="text-zinc-400 hover:text-cyan-400 transition-colors">
                   05. Direct Contact
                 </a>
               </li>
@@ -100,25 +102,28 @@ export default function Footer() {
                 href={PERSONAL.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-zinc-300 hover:text-lime transition-colors group"
+                onClick={() => sounds.playClick()}
+                className="flex items-center gap-2 text-zinc-300 hover:text-cyan-400 transition-colors group"
               >
-                <Github size={15} className="text-zinc-500 group-hover:text-lime transition-colors" />
+                <Github size={15} className="text-zinc-500 group-hover:text-cyan-400 transition-colors" />
                 <span>github.com/{PERSONAL.handle}</span>
               </a>
               <a
                 href={PERSONAL.links.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-zinc-300 hover:text-lime transition-colors group"
+                onClick={() => sounds.playClick()}
+                className="flex items-center gap-2 text-zinc-300 hover:text-cyan-400 transition-colors group"
               >
-                <Linkedin size={15} className="text-zinc-500 group-hover:text-lime transition-colors" />
+                <Linkedin size={15} className="text-zinc-500 group-hover:text-cyan-400 transition-colors" />
                 <span>linkedin.com/in/aryanjyadav</span>
               </a>
               <a
                 href={`mailto:${PERSONAL.email}`}
-                className="flex items-center gap-2 text-zinc-300 hover:text-lime transition-colors group"
+                onClick={() => sounds.playClick()}
+                className="flex items-center gap-2 text-zinc-300 hover:text-cyan-400 transition-colors group"
               >
-                <Mail size={15} className="text-zinc-500 group-hover:text-lime transition-colors" />
+                <Mail size={15} className="text-zinc-500 group-hover:text-cyan-400 transition-colors" />
                 <span>{PERSONAL.email}</span>
               </a>
             </div>
@@ -132,7 +137,7 @@ export default function Footer() {
           </div>
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-zinc-400 hover:text-lime transition-colors group px-3 py-1.5 rounded-full border border-white/5 hover:border-lime/30"
+            className="flex items-center gap-2 text-zinc-400 hover:text-cyan-400 transition-colors group px-3 py-1.5 rounded-full border border-white/5 hover:border-cyan-500/30"
           >
             <span>Back to top</span>
             <ArrowUp size={14} className="group-hover:-translate-y-0.5 transition-transform" />

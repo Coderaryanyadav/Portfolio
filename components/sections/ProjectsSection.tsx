@@ -4,15 +4,13 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Github, ExternalLink, BookOpen, Search, X, Sparkles } from "lucide-react";
 import { PROJECTS, Project } from "@/data/projects";
-import CaseStudyModal from "./CaseStudyModal";
 import { sounds } from "@/lib/sound";
 
 interface ProjectsSectionProps {
-  onOpenProject?: (project: Project) => void;
+  onOpenProject: (project: Project) => void;
 }
 
 export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("featured");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -39,15 +37,6 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
       return matchesCategory && matchesSearch;
     });
   }, [activeFilter, searchQuery]);
-
-  const handleSelectProject = (project: Project) => {
-    sounds.playClick();
-    if (onOpenProject) {
-      onOpenProject(project);
-    } else {
-      setSelectedProject(project);
-    }
-  };
 
   return (
     <section id="projects" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative">
@@ -77,17 +66,19 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
           </div>
         </div>
 
-        {/* Live Search & Filter Bar */}
+        {/* Live Search & Filter Bar with Complete Domain Set */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl bg-[#090b12] border border-white/10">
           {/* Domain Tabs */}
           <div className="flex flex-wrap gap-2 font-mono text-xs">
             {[
               { id: "featured", label: "Featured (6)" },
+              { id: "all", label: "All Repos (12)" },
               { id: "ai", label: "AI & RAG" },
               { id: "mobile", label: "Mobile" },
               { id: "systems", label: "Logistics & GIS" },
+              { id: "security", label: "Security" },
+              { id: "fullstack", label: "Full-Stack" },
               { id: "blockchain", label: "Web3" },
-              { id: "all", label: "All Repos (12)" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -113,7 +104,7 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filter by tech (e.g. Python, Flutter)..."
+              placeholder="Search tech, title, or domain..."
               className="w-full pl-9 pr-8 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/60 transition-colors font-mono"
             />
             {searchQuery && (
@@ -188,8 +179,11 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
                 {/* Card Footer Actions */}
                 <div className="pt-8 mt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
                   <button
-                    onClick={() => handleSelectProject(project)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-400 hover:text-black text-cyan-400 font-mono text-xs font-semibold border border-cyan-500/30 transition-all group/btn"
+                    onClick={() => {
+                      sounds.playClick();
+                      onOpenProject(project);
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-400 hover:text-black text-cyan-400 font-mono text-xs font-semibold border border-cyan-500/30 transition-all group/btn shadow-[0_0_15px_rgba(0,210,255,0.15)]"
                   >
                     <BookOpen size={14} />
                     <span>View Architecture & Case Study</span>
@@ -252,12 +246,6 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
           </a>
         </div>
       </div>
-
-      {/* Case Study Modal */}
-      <CaseStudyModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
     </section>
   );
 }

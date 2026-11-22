@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Github, ExternalLink, ShieldCheck, Cpu, Code2, AlertTriangle, Lightbulb, Layers, ArrowRight } from "lucide-react";
+import { X, Github, ExternalLink, ShieldCheck, Cpu, Code2, AlertTriangle, Lightbulb, Layers, Terminal, CheckCircle2 } from "lucide-react";
 import { Project } from "@/data/projects";
 import { sounds } from "@/lib/sound";
 
@@ -52,10 +52,10 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-4xl max-h-[90vh] bg-[#0c0e16] border border-cyan-500/30 rounded-2xl sm:rounded-3xl shadow-[0_0_60px_rgba(0,210,255,0.15)] flex flex-col overflow-hidden z-10"
+          className="relative w-full max-w-4xl max-h-[90vh] bg-[#090b14] border border-cyan-500/35 rounded-2xl sm:rounded-3xl shadow-[0_0_80px_rgba(0,210,255,0.2)] flex flex-col overflow-hidden z-10"
         >
           {/* Top Bar */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#07080f]">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#05060b]">
             <div className="flex items-center gap-3">
               <span
                 className="w-3 h-3 rounded-full"
@@ -82,7 +82,7 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
             {/* Header Title & Tagline */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-400">
+                <span className="px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-400 font-bold">
                   {project.domain.toUpperCase()}
                 </span>
                 <span className="text-zinc-500 font-mono text-xs">Released {project.year}</span>
@@ -113,12 +113,40 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => sounds.playClick()}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-400 text-black font-mono text-xs font-bold transition-all hover:bg-cyan-300"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-400 text-black font-mono text-xs font-bold transition-all hover:bg-cyan-300 shadow-[0_0_20px_rgba(0,210,255,0.4)]"
                 >
                   <ExternalLink size={15} />
                   <span>Open Verified Live App</span>
                 </a>
               )}
+            </div>
+
+            {/* Visual Engineering Mockup & Telemetry Card */}
+            <div className="rounded-2xl border border-cyan-500/25 bg-[#05060b] p-6 space-y-4 font-mono text-xs shadow-inner">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <Terminal size={14} className="text-cyan-400" />
+                  <span className="text-zinc-300 font-bold uppercase tracking-wider">{project.title} Telemetry Log</span>
+                </div>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">
+                  VERIFIED LOCAL EXECUTION
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-zinc-400 pt-1">
+                <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5 space-y-1">
+                  <span className="text-[10px] text-zinc-500 uppercase block">Execution Mode</span>
+                  <span className="text-white font-semibold">100% Offline / Zero Cloud Leak</span>
+                </div>
+                <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5 space-y-1">
+                  <span className="text-[10px] text-zinc-500 uppercase block">State Integrity</span>
+                  <span className="text-white font-semibold">Atomic Local Persistence</span>
+                </div>
+                <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5 space-y-1">
+                  <span className="text-[10px] text-zinc-500 uppercase block">Target Environment</span>
+                  <span className="text-white font-semibold">Production Desktop & Mobile</span>
+                </div>
+              </div>
             </div>
 
             {/* Overview & Problem Statements */}
@@ -167,12 +195,12 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                     }}
                     className={`p-3 rounded-xl border text-left font-mono text-xs transition-all ${
                       activeStep === idx
-                        ? "bg-cyan-500/10 border-cyan-500 text-cyan-400 shadow-[0_0_15px_rgba(0,210,255,0.2)]"
+                        ? "bg-cyan-500/15 border-cyan-400 text-cyan-300 shadow-[0_0_20px_rgba(0,210,255,0.25)] font-bold"
                         : "bg-black/30 border-white/5 text-zinc-400 hover:text-white"
                     }`}
                   >
-                    <span className="block text-[10px] text-zinc-500">STAGE 0{idx + 1}</span>
-                    <span className="truncate block font-semibold">Node {idx + 1}</span>
+                    <span className="block text-[10px] text-zinc-500">LAYER 0{idx + 1}</span>
+                    <span className="truncate block">Node {idx + 1}</span>
                   </button>
                 ))}
               </div>
@@ -183,14 +211,14 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="p-5 rounded-2xl bg-[#080910] border border-cyan-500/20 flex items-start gap-4"
+                className="p-5 rounded-2xl bg-[#06070e] border border-cyan-500/25 flex items-start gap-4"
               >
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center font-mono font-bold text-xs text-cyan-400 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center font-mono font-bold text-sm text-cyan-400 shrink-0">
                   0{activeStep + 1}
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-heading font-bold text-sm text-white">
-                    Architectural Layer 0{activeStep + 1}
+                    Architectural Pipeline Step 0{activeStep + 1}
                   </h4>
                   <p className="text-sm text-zinc-300 font-sans leading-relaxed">
                     {project.caseStudy.architecture[activeStep]}

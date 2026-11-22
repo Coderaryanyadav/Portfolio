@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Github, Star, GitFork, ArrowUpRight, FolderGit2, Terminal } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
+import { sounds } from "@/lib/sound";
 
 const AUDITED_REPOSITORIES = [
   { name: "FinAuditPro", lang: "Python", type: "Offline AI / FinTech", desc: "Standalone offline AI audit assistant tailored for CAs in India." },
@@ -17,13 +18,13 @@ const AUDITED_REPOSITORIES = [
 
 export default function GitHubSection() {
   return (
-    <section className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#060608]">
+    <section className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#06070a]">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 font-mono text-xs text-lime uppercase tracking-widest">
-              <span className="w-2 h-2 rounded-full bg-lime" />
+            <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-cyan-400" />
               <span>05 — Open Source & Codebase</span>
             </div>
             <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white">
@@ -38,7 +39,8 @@ export default function GitHubSection() {
             href={PERSONAL.links.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-lime text-black font-heading font-bold text-xs tracking-wider uppercase hover:shadow-[0_0_25px_rgba(198,255,77,0.3)] transition-all"
+            onClick={() => sounds.playClick()}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider uppercase hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
           >
             <Github size={16} />
             <span>Visit @{PERSONAL.handle}</span>
@@ -54,20 +56,21 @@ export default function GitHubSection() {
               href={`https://github.com/Coderaryanyadav/${repo.name}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => sounds.playClick()}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
               whileHover={{ y: -4 }}
-              className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/5 hover:border-lime/40 flex flex-col justify-between group transition-all"
+              className="p-6 rounded-2xl bg-[#090b12] border border-white/5 hover:border-cyan-500/40 flex flex-col justify-between group transition-all hover:shadow-[0_10px_30px_rgba(0,210,255,0.1)]"
             >
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-zinc-500 group-hover:text-lime transition-colors">
+                <div className="flex items-center justify-between text-zinc-500 group-hover:text-cyan-400 transition-colors">
                   <FolderGit2 size={18} />
                   <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-base text-white group-hover:text-lime transition-colors">
+                  <h3 className="font-heading font-bold text-base text-white group-hover:text-cyan-400 transition-colors">
                     {repo.name}
                   </h3>
                   <span className="font-mono text-[10px] text-zinc-400 block mt-0.5">
@@ -81,7 +84,7 @@ export default function GitHubSection() {
 
               <div className="pt-4 mt-4 border-t border-white/5 flex items-center justify-between font-mono text-[11px] text-zinc-400">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-lime" />
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
                   {repo.lang}
                 </span>
                 <span className="text-zinc-400 group-hover:text-white transition-colors">

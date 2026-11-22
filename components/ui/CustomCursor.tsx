@@ -23,7 +23,9 @@ export default function CustomCursor() {
       if (
         target?.closest("a") ||
         target?.closest("button") ||
-        target?.closest("[data-cursor='pointer']")
+        target?.closest("[data-cursor='pointer']") ||
+        target?.closest("input") ||
+        target?.closest("textarea")
       ) {
         setIsHovered(true);
       } else {
@@ -50,27 +52,28 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer subtle follower */}
+      {/* Outer subtle follower in Electric Cyber Blue */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full border border-lime/60 mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full border border-cyan-400/60"
         animate={{
-          x: mousePosition.x - (isHovered ? 28 : 16),
-          y: mousePosition.y - (isHovered ? 28 : 16),
-          width: isHovered ? 56 : 32,
-          height: isHovered ? 56 : 32,
+          x: mousePosition.x - (isHovered ? 26 : 15),
+          y: mousePosition.y - (isHovered ? 26 : 15),
+          width: isHovered ? 52 : 30,
+          height: isHovered ? 52 : 30,
           scale: isHovered ? 1.15 : 1,
-          backgroundColor: isHovered ? "rgba(198, 255, 77, 0.15)" : "transparent",
+          backgroundColor: isHovered ? "rgba(0, 210, 255, 0.18)" : "transparent",
+          boxShadow: isHovered ? "0 0 25px rgba(0, 210, 255, 0.3)" : "none",
         }}
         transition={{
           type: "spring",
-          damping: 25,
-          stiffness: 300,
-          mass: 0.5,
+          damping: 26,
+          stiffness: 320,
+          mass: 0.45,
         }}
       />
-      {/* Center dot */}
+      {/* Center dot in Electric Cyan */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full bg-lime"
+        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full bg-cyan-400 shadow-[0_0_10px_#00d2ff]"
         animate={{
           x: mousePosition.x - 3,
           y: mousePosition.y - 3,
