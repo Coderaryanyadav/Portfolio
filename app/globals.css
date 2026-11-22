@@ -403,6 +403,84 @@ body {
 }
 
 /* =========================================================================
+   MONCY.DEV AMBIENT GRADIENT ORBS & HOVER LINK FLIP EFFECTS
+   ========================================================================= */
+
+.landing-circle1 {
+  top: 0%;
+  left: 0%;
+  z-index: 5;
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background-color: rgba(194, 164, 255, 0.22);
+  box-shadow: inset -50px 40px 60px rgba(0, 210, 255, 0.35);
+  filter: blur(85px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: loadingCircle 16s linear infinite;
+}
+
+.landing-circle2 {
+  top: 50%;
+  right: 0%;
+  transform: translate(40%, -50%);
+  z-index: 5;
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background-color: rgba(0, 210, 255, 0.2);
+  box-shadow: inset -50px 40px 60px rgba(168, 85, 247, 0.35);
+  filter: blur(85px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: loadingCircle2 18s linear infinite;
+}
+
+.nav-fade {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 120px;
+  background-image: linear-gradient(
+    to bottom,
+    #050608 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 30;
+  left: 0;
+}
+
+@keyframes loadingCircle {
+  0% { transform: translate(-40%, -40%) rotate(0deg); }
+  100% { transform: translate(-40%, -40%) rotate(360deg); }
+}
+
+@keyframes loadingCircle2 {
+  0% { transform: translate(40%, -50%) rotate(0deg); }
+  100% { transform: translate(40%, -50%) rotate(360deg); }
+}
+
+/* Moncy Signature Double Slide HoverLink */
+.hover-link {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.hover-in {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-link:hover .hover-in {
+  transform: translateY(-100%);
+}
+
+/* =========================================================================
    HERO / LANDING SECTION STYLING (EXACT MONCY.DEV - IMAGE 2)
    ========================================================================= */
 

@@ -18,6 +18,7 @@ import ResumeModal from "@/components/ui/ResumeModal";
 import CaseStudyModal from "@/components/sections/CaseStudyModal";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import ContinuousMarquee from "@/components/ui/ContinuousMarquee";
+import SocialIcons from "@/components/ui/SocialIcons";
 import { Project } from "@/data/projects";
 
 export default function Home() {
@@ -48,6 +49,9 @@ export default function Home() {
           onOpenTerminal={() => setTerminalOpen(true)}
           onOpenResume={() => setResumeOpen(true)}
         />
+
+        {/* Moncy Fixed Magnetic Social Icons & Resume Floating Pill */}
+        <SocialIcons onOpenResume={() => setResumeOpen(true)} />
 
         {/* Fixed 3D Character Model (Orchestrated by GSAP across Hero -> About -> WhatIDo) */}
         <CharacterScene />

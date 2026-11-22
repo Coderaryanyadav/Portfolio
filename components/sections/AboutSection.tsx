@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Terminal, Shield, Cpu, CheckCircle2, ArrowRight } from "lucide-react";
+import { Terminal, Shield, Cpu, CheckCircle2 } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
 
 const pillarIcons = [
@@ -12,143 +12,83 @@ const pillarIcons = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="about-section py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative z-10">
-      <div className="about-me max-w-7xl mx-auto space-y-16 sm:space-y-24">
+    <section id="about" className="about-section min-h-screen flex items-center py-24 sm:py-32 px-6 sm:px-12 xl:px-20 border-b border-white/5 relative z-10">
+      {/* On desktop (lg:), this takes the right 50% of the screen while the 3D character is on the left */}
+      <div className="about-me w-full lg:w-1/2 lg:ml-auto space-y-10">
         {/* Section Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
             <span>01 — Identity & Focus</span>
           </div>
-          <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white max-w-4xl">
+          <h2 className="text-3xl sm:text-5xl font-heading font-extrabold tracking-tight text-white leading-tight">
             "Curiosity drives everything I build."
           </h2>
         </div>
 
-        {/* Narrative Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-7 space-y-6 text-zinc-300 font-sans text-lg leading-relaxed">
-            <p>
-              I'm <strong className="text-white font-medium">Aryan Yadav</strong>, an engineering
-              student interested in software development, cybersecurity, artificial intelligence and
-              the systems behind modern technology.
-            </p>
-            <p className="text-zinc-400">
-              I enjoy understanding how things work internally, experimenting with new technologies,
-              solving engineering problems and building applications that address practical challenges.
-            </p>
-            <p className="text-zinc-400">
-              My projects span financial auditing, AI-powered applications, blockchain verification,
-              mobile applications, real-time systems and secure communication.
-            </p>
+        {/* Narrative */}
+        <div className="space-y-5 text-zinc-300 font-sans text-base sm:text-lg leading-relaxed">
+          <p>
+            I'm <strong className="text-white font-medium">Aryan Yadav</strong>, an engineering student based in Mumbai building software across full-stack architecture, offline artificial intelligence, and defensive cybersecurity.
+          </p>
+          <p className="text-zinc-400 text-sm sm:text-base">
+            I specialize in air-gapped systems—engineering local vector RAG pipelines with ChromaDB that execute 100% on consumer hardware without cloud data leakage, and statutory compliance rule engines that eliminate hallucination.
+          </p>
+          <p className="text-zinc-400 text-sm sm:text-base">
+            My projects span financial auditing desktops, spatial GIS emergency fleet dispatch with PostGIS, cross-platform mobile apps with Flutter and React Native, and Web3 cryptographic verification portals.
+          </p>
 
-            <div className="pt-4 flex flex-wrap gap-3 font-mono text-xs">
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
-                Offline-First RAG
-              </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
-                Spatial GIS Routing
-              </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
-                Symmetric Ciphers (AES)
-              </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300">
-                Cross-Platform Flutter & React Native
-              </span>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5 bg-[#0e0e16] border border-cyan-500/20 rounded-2xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <span className="font-mono text-xs text-zinc-400 uppercase tracking-wider">
-                Engineering Blueprint
-              </span>
-              <span className="font-mono text-xs text-cyan-400 font-bold">Active Focus</span>
-            </div>
-
-            <ul className="space-y-4 font-sans text-sm text-zinc-300">
-              <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white font-medium">Zero-Leakage Local AI:</strong> Delivering intelligence on consumer hardware without sending private data to cloud endpoints.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white font-medium">Resilient Mobile Architecture:</strong> Building offline-capable apps with local caching (Hive/SQLite) and optimistic sync.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle2 size={18} className="text-cyan-400 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-white font-medium">Provable Integrity:</strong> Using client-side SHA-256 signatures and smart contracts to protect certificates against fraud.
-                </span>
-              </li>
-            </ul>
-
-            <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs font-mono text-zinc-400">
-              <span>Location: Mumbai, IN</span>
-              <span className="text-cyan-400">100% Code Verified</span>
-            </div>
+          <div className="pt-2 flex flex-wrap gap-2.5 font-mono text-xs">
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-cyan-300">
+              Offline-First RAG
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300">
+              Spatial GIS PostGIS
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300">
+              Symmetric Ciphers (AES)
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300">
+              Flutter & React Native
+            </span>
           </div>
         </div>
 
-        {/* The 3 Core Identity Blocks: 01 BUILD, 02 EXPLORE, 03 SOLVE */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="font-mono text-xs text-zinc-400 uppercase tracking-widest">
-              Core Engineering Pillars
-            </h3>
-            <span className="font-mono text-xs text-zinc-500">Methodology & Practice</span>
+        {/* Engineering Highlights */}
+        <div className="bg-[#090b14]/90 backdrop-blur-md border border-cyan-500/20 rounded-2xl p-6 sm:p-7 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <span className="font-mono text-xs text-zinc-400 uppercase tracking-wider">
+              Engineering Blueprint
+            </span>
+            <span className="font-mono text-xs text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+              100% VERIFIED
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PERSONAL.pillars.map((pillar, idx) => (
-              <motion.div
-                key={pillar.number}
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.25 }}
-                className="group relative bg-[#090b12] hover:bg-[#0e111d] border border-white/5 hover:border-cyan-500/40 rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,210,255,0.15)]"
-              >
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-3xl font-extrabold text-zinc-600 group-hover:text-cyan-400 transition-colors">
-                      {pillar.number}
-                    </span>
-                    <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-cyan-500/40 flex items-center justify-center transition-colors">
-                      {pillarIcons[idx]}
-                    </div>
-                  </div>
+          <ul className="space-y-3 font-sans text-xs sm:text-sm text-zinc-300">
+            <li className="flex items-start gap-3">
+              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-white font-medium">Zero-Leakage Local AI:</strong> Delivering intelligence on local machines with ChromaDB without sending sensitive enterprise data to external APIs.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-white font-medium">Offline Caching & Sync:</strong> High-performance local persistence with Hive and SQLite for resilient mobile workflows.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-white font-medium">Defensive Security:</strong> Client-side SHA-256 integrity proofs and Ethereum Solidity smart contract verification.
+              </span>
+            </li>
+          </ul>
 
-                  <div className="space-y-2">
-                    <h4 className="font-heading font-bold text-2xl text-white tracking-tight">
-                      {pillar.title}
-                    </h4>
-                    <p className="font-mono text-xs text-cyan-400">
-                      {pillar.subtitle}
-                    </p>
-                  </div>
-
-                  <p className="text-sm text-zinc-400 font-sans leading-relaxed">
-                    {pillar.details}
-                  </p>
-                </div>
-
-                <div className="pt-6 mt-6 border-t border-white/5">
-                  <div className="flex flex-wrap gap-1.5">
-                    {pillar.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="font-mono text-[11px] px-2.5 py-1 rounded-md bg-white/[0.04] text-zinc-400 border border-white/5"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs font-mono text-zinc-400">
+            <span>Location: Mumbai, IN (UTC+5:30)</span>
+            <span className="text-cyan-400 font-bold">14 Active Repos</span>
           </div>
         </div>
       </div>
