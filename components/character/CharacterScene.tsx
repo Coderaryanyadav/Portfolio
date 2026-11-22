@@ -17,14 +17,18 @@ interface CharacterSceneProps {
 export default function CharacterScene({ onLoaded, className = "" }: CharacterSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const hoverRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
+    setIsDesktop(window.innerWidth > 1024);
     gsap.registerPlugin(ScrollTrigger);
 
     if (!mountRef.current) return;
     const container = mountRef.current;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    const isDesktopView = window.innerWidth > 1024;
+
+    let width = isDesktopView ? window.innerWidth : container.clientWidth || window.innerWidth;
+    let height = isDesktopView ? window.innerHeight : container.clientHeight || 450;
     let aspect = width / height;
 
     // Three.js Scene Setup
@@ -33,25 +37,30 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
     // Initial Camera Setup - exact front-facing bust view from moncy.dev
-    const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
-    camera.position.set(0, 13.1, 24.7);
-    camera.zoom = 1.1;
+    const camera = new THREE.PerspectiveCamera(
+      isDesktopView ? 14.5 : 16.5,
+      aspect,
+      0.1,
+      1000
+    );
+    if (isDesktopView) {
+      camera.position.set(0, 13.1, 24.7);
+      camera.zoom = 1.1;
+    } else {
+      camera.position.set(0, 13.0, 27.5);
+      camera.zoom = 1.0;
+    }
     camera.updateProjectionMatrix();
 
     // Lighting (Cyber Blue & Lavender palette matching Image 2 & Image 3)
-    const directionalLight = new THREE.DirectionalLight(0x00d2ff, 0);
+    const directionalLight = new THREE.DirectionalLight(0xc2a4ff, 0);
     directionalLight.position.set(-0.47, -0.32, -1);
     directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 1024;
-    directionalLight.shadow.mapSize.height = 1024;
-    directionalLight.shadow.camera.near = 0.5;
-    directionalLight.shadow.camera.far = 50;
     scene.add(directionalLight);
 
     const pointLight = new THREE.PointLight(0x00d2ff, 0, 100, 3);
@@ -87,11 +96,24 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     let neckBone: THREE.Object3D | null = null;
     let screenLight: any = null;
     let monitorMesh: any = null;
-    let monitorContainer: any = null;
+    let monitorObject: any = null;
     let eyeBrowUpAction: THREE.AnimationAction | null = null;
     let characterMesh: THREE.Object3D | null = null;
     let isHovering = false;
     let scrollTriggers: ScrollTrigger[] = [];
+
+    // Array of workstation objects that MUST BE HIDDEN in the Hero Section
+    const workstationMeshes: THREE.Object3D[] = [];
+    const workstationNodeNames = [
+      "Plane",
+      "Plane.002",
+      "Plane.003",
+      "Plane.004",
+      "screenlight",
+      "Keyboard",
+      "Cube.002",
+      "ground",
+    ];
 
     loader.load(
       "/models/character.glb",
@@ -106,6 +128,42 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             child.receiveShadow = true;
             child.frustumCulled = true;
           }
+
+          // Check if this object belongs to the workstation (desk, chair, keyboard, monitor, floor)
+          const isWorkstationPart =
+            workstationNodeNames.some(
+              (name) => child.name === name || child.name.replace(".", "") === name.replace(".", "")
+            ) || child.name.startsWith("KEYS");
+
+          if (isWorkstationPart) {
+            workstationMeshes.push(child);
+            // HIDE IN HERO SECTION! Zero white desk tabletop floating at character chest!
+            child.visible = false;
+          }
+
+          // Monitor & Screenlight specifics
+          if (child.name === "Plane.004" || child.name === "Plane004") {
+            monitorObject = child;
+            child.position.set(0, -10, 2);
+            child.traverse((sub: any) => {
+              if (sub.material && sub.material.name === "Material.027") {
+                monitorMesh = sub;
+                sub.material.transparent = true;
+                sub.material.opacity = 0;
+                sub.material.color.set("#00D2FF");
+              }
+            });
+          }
+
+          if (child.name === "screenlight") {
+            screenLight = child;
+            if (child.material) {
+              child.material.transparent = true;
+              child.material.opacity = 0;
+              child.material.emissive.set("#00D2FF");
+              child.material.emissiveIntensity = 4;
+            }
+          }
         });
 
         // Bone offsets for proper chair alignment
@@ -116,35 +174,6 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         headBone = char.getObjectByName("spine006") || null;
         neckBone = char.getObjectByName("spine005") || null;
-
-        // Monitor & Screenlight: HIDE AND LOWER IN THE HERO SECTION (matching Image 2)
-        // They will smoothly rise and fade in during scroll into "What I Do" (matching Image 3)
-        char.traverse((object: any) => {
-          if (object.name === "Plane004") {
-            monitorContainer = object;
-            // Lower below desk level so it never peeks over the character's face in the Hero
-            object.position.set(0, -10, 2);
-            object.traverse((child: any) => {
-              if (child.material) {
-                child.material.transparent = true;
-                child.material.opacity = 0; // completely invisible at start
-                if (child.material.name === "Material.027") {
-                  monitorMesh = child;
-                  child.material.color.set("#00D2FF");
-                }
-              }
-            });
-          }
-          if (object.name === "screenlight") {
-            screenLight = object;
-            if (object.material) {
-              object.material.transparent = true;
-              object.material.opacity = 0; // completely invisible at start
-              object.material.emissive.set("#00D2FF");
-              object.material.emissiveIntensity = 4;
-            }
-          }
-        });
 
         scene.add(char);
         mixer = new THREE.AnimationMixer(char);
@@ -220,12 +249,14 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           ease: "power2.out",
         });
 
-        // Register GSAP ScrollTrigger Choreography (Exact moncy.dev timeline)
-        if (window.innerWidth > 1024) {
-          let intensity = 1;
-          const flickerInterval = setInterval(() => {
-            intensity = 0.5 + Math.random() * 0.8;
-          }, 200);
+        // Register GSAP ScrollTrigger Choreography (Desktop only)
+        if (isDesktopView) {
+          // Helper to toggle workstation visibility
+          const setWorkstationVisible = (visible: boolean) => {
+            workstationMeshes.forEach((mesh) => {
+              mesh.visible = visible;
+            });
+          };
 
           // TL1: Hero Section Scroll -> Character turns slightly, camera zooms out, hero typography fades
           const tl1 = gsap.timeline({
@@ -235,6 +266,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               end: "bottom top",
               scrub: 1,
               invalidateOnRefresh: true,
+              onLeaveBack: () => setWorkstationVisible(false),
             },
           });
           tl1
@@ -242,10 +274,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             .to(camera.position, { z: 22 }, 0)
             .fromTo(".character-model", { x: 0 }, { x: "-25%", duration: 1 }, 0)
             .to(".landing-container", { opacity: 0, duration: 0.4 }, 0)
-            .to(".landing-container", { y: "40%", duration: 0.8 }, 0)
-            .fromTo(".about-me", { y: "-50%" }, { y: "0%" }, 0);
+            .to(".landing-container", { y: "40%", duration: 0.8 }, 0);
 
-          // TL2: About Section -> Transition into "What I Do" (Workstation reveal!)
+          // TL2: About Section -> Transition into "What I Do" (Reveal Workstation!)
           const tl2 = gsap.timeline({
             scrollTrigger: {
               trigger: ".about-section",
@@ -253,6 +284,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               end: "bottom top",
               scrub: 1,
               invalidateOnRefresh: true,
+              onEnter: () => setWorkstationVisible(true),
+              onLeaveBack: () => setWorkstationVisible(false),
             },
           });
 
@@ -273,24 +306,22 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           }
 
           // Monitor & screen light rise and turn on
-          if (monitorMesh && monitorContainer) {
-            tl2
-              .fromTo(monitorContainer.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0)
-              .to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
+          if (monitorObject) {
+            tl2.fromTo(monitorObject.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0);
           }
-
-          if (screenLight) {
+          if (monitorMesh) {
+            tl2.to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
+          }
+          if (screenLight && screenLight.material) {
             tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 3.8 }, 0);
           }
 
-          tl2
-            .fromTo(".what-box-in", { display: "none" }, { display: "flex", duration: 0.1, delay: 5 }, 0)
-            .fromTo(
-              ".character-rim",
-              { opacity: 0.9, scale: 1.3 },
-              { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 1 },
-              0
-            );
+          tl2.fromTo(
+            ".character-rim",
+            { opacity: 0.9, scale: 1.3 },
+            { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 1 },
+            0
+          );
 
           // TL3: What I Do Section -> Character stays seated typing, then glides up past viewport
           const tl3 = gsap.timeline({
@@ -363,10 +394,15 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     // Resize Handler
     const handleWindowResize = () => {
       if (!mountRef.current) return;
-      width = window.innerWidth;
-      height = window.innerHeight;
+      const desktop = window.innerWidth > 1024;
+      setIsDesktop(desktop);
+
+      width = desktop ? window.innerWidth : mountRef.current.clientWidth || window.innerWidth;
+      height = desktop ? window.innerHeight : mountRef.current.clientHeight || 450;
       aspect = width / height;
+
       camera.aspect = aspect;
+      camera.fov = desktop ? 14.5 : 16.5;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       ScrollTrigger.refresh();
