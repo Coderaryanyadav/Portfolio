@@ -341,14 +341,6 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           title="Looking at me? (Hover to raise eyebrows)"
         />
       </div>
-
-      {/* Subtle loader fallback */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-cyan-400/70 tracking-widest uppercase gap-2 bg-[#050608]/40 backdrop-blur-sm z-30">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span>INITIALIZING 3D NEURAL CORE</span>
-        </div>
-      )}
     </div>
   );
 }
