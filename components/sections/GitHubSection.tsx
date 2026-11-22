@@ -14,11 +14,17 @@ const AUDITED_REPOSITORIES = [
   { name: "Ayurchain", lang: "Solidity / PHP", type: "Blockchain / Web3", desc: "Ayurvedic medicine storage & certificate hash verification." },
   { name: "SecureChat", lang: "Python", type: "Cybersecurity", desc: "End-to-end encrypted messaging with AES-GCM & WebSockets." },
   { name: "CsvToMcqApp", lang: "Dart", type: "EdTech Mobile/Web", desc: "Cross-platform MCQ certification exam simulator." },
+  { name: "DesiLearCode", lang: "TypeScript", type: "EdTech Infrastructure", desc: "Open infrastructure connecting hardware & labs across India." },
+  { name: "GenZThrift", lang: "TypeScript", type: "E-Commerce Monorepo", desc: "60-minute quick fashion delivery multi-app monorepo." },
+  { name: "FlashFit", lang: "TypeScript", type: "E-Commerce Logistics", desc: "On-demand rapid fashion delivery & size reservation portal." },
+  { name: "LostAndFound", lang: "Python", type: "Campus Management", desc: "College campus missing item tracking & custody verification." },
+  { name: "SgEngineering", lang: "JavaScript", type: "Industrial Web Portal", desc: "Official portal for ISO-certified industrial crane manufacturing." },
+  { name: "QrCode", lang: "Python", type: "Cryptography & Vision", desc: "High-density QR matrix generator & Reed-Solomon error correction." },
 ];
 
 export default function GitHubSection() {
   return (
-    <section className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#06070a]">
+    <section id="github" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative bg-[#06070a]">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -31,7 +37,7 @@ export default function GitHubSection() {
               Verified Repositories.
             </h2>
             <p className="text-base text-zinc-400 font-sans max-w-xl">
-              All projects are backed by publicly auditable source code, comprehensive commits, and reproducible local setups.
+              All 14 projects are backed by publicly auditable source code, comprehensive commits, and reproducible local setups.
             </p>
           </div>
 
@@ -40,7 +46,7 @@ export default function GitHubSection() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sounds.playClick()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider uppercase hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider uppercase hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all shrink-0"
           >
             <Github size={16} />
             <span>Visit @{PERSONAL.handle}</span>
@@ -49,7 +55,7 @@ export default function GitHubSection() {
         </div>
 
         {/* Repositories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {AUDITED_REPOSITORIES.map((repo, idx) => (
             <motion.a
               key={repo.name}
@@ -60,7 +66,7 @@ export default function GitHubSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              transition={{ duration: 0.4, delay: idx * 0.04 }}
               whileHover={{ y: -4 }}
               className="p-6 rounded-2xl bg-[#090b12] border border-white/5 hover:border-cyan-500/40 flex flex-col justify-between group transition-all hover:shadow-[0_10px_30px_rgba(0,210,255,0.1)]"
             >

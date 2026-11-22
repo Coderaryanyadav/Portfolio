@@ -46,8 +46,9 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
           className="absolute inset-0 bg-black/85 backdrop-blur-md"
         />
 
-        {/* Modal Window */}
+        {/* Modal Window with data-lenis-prevent to isolate scrolling */}
         <motion.div
+          data-lenis-prevent="true"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -78,7 +79,7 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
           </div>
 
           {/* Modal Content Scrollable Body */}
-          <div className="p-6 sm:p-10 overflow-y-auto space-y-10">
+          <div data-lenis-prevent="true" className="p-6 sm:p-10 overflow-y-auto space-y-10">
             {/* Header Title & Tagline */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -221,7 +222,7 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                     Architectural Pipeline Step 0{activeStep + 1}
                   </h4>
                   <p className="text-sm text-zinc-300 font-sans leading-relaxed">
-                    {project.caseStudy.architecture[activeStep]}
+                    {project.caseStudy.architecture[activeStep] || project.caseStudy.architecture[0]}
                   </p>
                 </div>
               </motion.div>

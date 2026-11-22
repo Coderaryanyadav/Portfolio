@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Github, ExternalLink, BookOpen, Search, X, Sparkles } from "lucide-react";
+import { ArrowUpRight, Github, ExternalLink, BookOpen, Search, X, Sparkles, AlertCircle } from "lucide-react";
 import { PROJECTS, Project } from "@/data/projects";
 import { sounds } from "@/lib/sound";
 
@@ -38,6 +38,8 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
     });
   }, [activeFilter, searchQuery]);
 
+  const featuredCount = useMemo(() => PROJECTS.filter((p) => p.featured).length, []);
+
   return (
     <section id="projects" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative">
       <div className="max-w-7xl mx-auto space-y-16">
@@ -66,13 +68,13 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
           </div>
         </div>
 
-        {/* Live Search & Filter Bar with Complete Domain Set */}
+        {/* Live Search & Filter Bar */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl bg-[#090b12] border border-white/10">
           {/* Domain Tabs */}
           <div className="flex flex-wrap gap-2 font-mono text-xs">
             {[
-              { id: "featured", label: "Featured (6)" },
-              { id: "all", label: "All Repos (12)" },
+              { id: "featured", label: `Featured (${featuredCount})` },
+              { id: "all", label: `All Repos (${PROJECTS.length})` },
               { id: "ai", label: "AI & RAG" },
               { id: "mobile", label: "Mobile" },
               { id: "systems", label: "Logistics & GIS" },
@@ -119,109 +121,128 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
         </div>
 
         {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, idx) => (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3, delay: idx * 0.04 }}
-                className="group relative bg-[#090b12] border border-white/10 hover:border-cyan-500/40 rounded-3xl p-8 sm:p-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)]"
-              >
-                <div className="space-y-6">
-                  {/* Top Bar */}
-                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: project.accentColor || "#00D2FF" }}
-                      />
-                      <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest">
-                        {project.category}
+        {filteredProjects.length === 0 ? (
+          <div className="p-12 text-center rounded-3xl bg-[#090b12] border border-white/10 space-y-4">
+            <AlertCircle size={32} className="mx-auto text-zinc-500" />
+            <h3 className="font-heading font-bold text-lg text-white">No projects found</h3>
+            <p className="text-xs font-mono text-zinc-400">
+              No repositories match your current filter or search query "{searchQuery}".
+            </p>
+            <button
+              onClick={() => {
+                setActiveFilter("all");
+                setSearchQuery("");
+              }}
+              className="px-4 py-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-xs font-mono border border-cyan-500/30 transition-all"
+            >
+              Reset Filters & Show All
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, idx) => (
+                <motion.div
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.3, delay: idx * 0.04 }}
+                  className="group relative bg-[#090b12] border border-white/10 hover:border-cyan-500/40 rounded-3xl p-8 sm:p-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)]"
+                >
+                  <div className="space-y-6">
+                    {/* Top Bar */}
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: project.accentColor || "#00D2FF" }}
+                        />
+                        <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest">
+                          {project.category}
+                        </span>
+                      </div>
+                      <span className="font-mono text-xs text-zinc-600">
+                        {idx + 1 < 10 ? `0${idx + 1}` : idx + 1} / {filteredProjects.length < 10 ? `0${filteredProjects.length}` : filteredProjects.length}
                       </span>
                     </div>
-                    <span className="font-mono text-xs text-zinc-600">
-                      0{idx + 1} / 0{filteredProjects.length}
-                    </span>
-                  </div>
 
-                  {/* Title & Tagline */}
-                  <div className="space-y-2">
-                    <h3 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight group-hover:text-cyan-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="font-mono text-xs text-zinc-400">
-                      {project.tagline}
+                    {/* Title & Tagline */}
+                    <div className="space-y-2">
+                      <h3 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight group-hover:text-cyan-400 transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="font-mono text-xs text-zinc-400">
+                        {project.tagline}
+                      </p>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-zinc-300 font-sans leading-relaxed">
+                      {project.shortDescription}
                     </p>
+
+                    {/* Stack Tags */}
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {project.techStack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/5 font-mono text-[11px] text-zinc-300 group-hover:border-cyan-500/20 transition-colors"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Description */}
-                  <p className="text-sm text-zinc-300 font-sans leading-relaxed">
-                    {project.shortDescription}
-                  </p>
-
-                  {/* Stack Tags */}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {project.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/5 font-mono text-[11px] text-zinc-300 group-hover:border-cyan-500/20 transition-colors"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Card Footer Actions */}
-                <div className="pt-8 mt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
-                  <button
-                    onClick={() => {
-                      sounds.playClick();
-                      onOpenProject(project);
-                    }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-400 hover:text-black text-cyan-400 font-mono text-xs font-semibold border border-cyan-500/30 transition-all group/btn shadow-[0_0_15px_rgba(0,210,255,0.15)]"
-                  >
-                    <BookOpen size={14} />
-                    <span>View Architecture & Case Study</span>
-                    <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                  </button>
-
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => sounds.playClick()}
-                      className="p-2.5 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-colors border border-white/5"
-                      aria-label={`GitHub repository for ${project.title}`}
-                      title="View GitHub Repository"
+                  {/* Card Footer Actions */}
+                  <div className="pt-8 mt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        onOpenProject(project);
+                      }}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-400 hover:text-black text-cyan-400 font-mono text-xs font-semibold border border-cyan-500/30 transition-all group/btn shadow-[0_0_15px_rgba(0,210,255,0.15)]"
                     >
-                      <Github size={16} />
-                    </a>
+                      <BookOpen size={14} />
+                      <span>View Architecture & Case Study</span>
+                      <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                    </button>
 
-                    {project.liveUrl && (
+                    <div className="flex items-center gap-2">
                       <a
-                        href={project.liveUrl}
+                        href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => sounds.playClick()}
-                        className="p-2.5 rounded-full bg-white/5 hover:bg-cyan-400 hover:text-black text-zinc-400 transition-colors border border-white/5"
-                        aria-label={`Live demo for ${project.title}`}
-                        title="Open Verified Live App"
+                        className="p-2.5 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-colors border border-white/5"
+                        aria-label={`GitHub repository for ${project.title}`}
+                        title="View GitHub Repository"
                       >
-                        <ExternalLink size={16} />
+                        <Github size={16} />
                       </a>
-                    )}
+
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => sounds.playClick()}
+                          className="p-2.5 rounded-full bg-white/5 hover:bg-cyan-400 hover:text-black text-zinc-400 transition-colors border border-white/5"
+                          aria-label={`Live demo for ${project.title}`}
+                          title="Open Verified Live App"
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* 14 Repositories Verification Banner */}
         <div className="p-8 rounded-3xl bg-[#080910] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">

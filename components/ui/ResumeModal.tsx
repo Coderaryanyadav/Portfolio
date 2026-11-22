@@ -39,6 +39,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
         />
 
         <motion.div
+          data-lenis-prevent="true"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -70,7 +71,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
           </div>
 
           {/* Printable Resume Content */}
-          <div className="p-8 sm:p-10 overflow-y-auto space-y-8 font-sans text-zinc-200">
+          <div data-lenis-prevent="true" className="p-8 sm:p-10 overflow-y-auto space-y-8 font-sans text-zinc-200">
             {/* Top Identity */}
             <div className="border-b border-white/10 pb-6 space-y-2">
               <h1 className="text-3xl font-heading font-extrabold text-white tracking-tight">

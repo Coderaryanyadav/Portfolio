@@ -15,6 +15,9 @@ export default function ContinuousMarquee({
   speedSeconds = 30,
   className = "",
 }: ContinuousMarqueeProps) {
+  // Multiply items to guarantee zero gaps across ultra-wide monitors (e.g. 4K)
+  const fullItems = [...items, ...items, ...items];
+
   return (
     <div className={`overflow-hidden whitespace-nowrap flex select-none py-6 border-y border-white/5 bg-[#06070c] relative ${className}`}>
       {/* Ambient gradient fade edges */}
@@ -27,7 +30,7 @@ export default function ContinuousMarquee({
           animation: `marquee-scroll-${direction} ${speedSeconds}s linear infinite`,
         }}
       >
-        {items.map((item, idx) => (
+        {fullItems.map((item, idx) => (
           <div key={idx} className="flex items-center gap-8">
             <span className="hover:text-cyan-400 transition-colors">{item}</span>
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/80 shadow-[0_0_10px_rgba(0,210,255,0.6)]" />
@@ -42,7 +45,7 @@ export default function ContinuousMarquee({
           animation: `marquee-scroll-${direction} ${speedSeconds}s linear infinite`,
         }}
       >
-        {items.map((item, idx) => (
+        {fullItems.map((item, idx) => (
           <div key={`dup-${idx}`} className="flex items-center gap-8">
             <span className="hover:text-cyan-400 transition-colors">{item}</span>
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/80 shadow-[0_0_10px_rgba(0,210,255,0.6)]" />

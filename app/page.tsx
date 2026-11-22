@@ -56,7 +56,7 @@ export default function Home() {
           onOpenResume={() => setResumeOpen(true)}
         />
 
-        {/* Hero Section */}
+        {/* Hero Section with Interactive 3D Character Model */}
         <HeroSection />
 
         {/* Moncy-style Infinite Continuous Ticker Ribbon #1 */}
@@ -113,6 +113,7 @@ export default function Home() {
           isOpen={terminalOpen}
           onClose={() => setTerminalOpen(false)}
           onSelectProject={(p) => setActiveCaseStudyProject(p)}
+          onOpenResume={() => setResumeOpen(true)}
         />
 
         {/* Interactive Curriculum Vitae Modal */}

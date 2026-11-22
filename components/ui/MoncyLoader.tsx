@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { sounds } from "@/lib/sound";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface MoncyLoaderProps {
   onComplete?: () => void;
@@ -33,7 +33,7 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
         }, 200);
       }
       setPercent(Math.min(current, 100));
-    }, 35);
+    }, 32);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
@@ -80,24 +80,27 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
     >
       {/* Top Header with Brand Title & Mini Bouncing Ball Game */}
       <div className="loading-header">
-        <a href="#hero" className="loader-title flex items-center gap-2">
+        <button
+          onClick={triggerEnter}
+          className="loader-title flex items-center gap-2 hover:text-cyan-400 transition-colors text-left"
+        >
           <span>ARYAN YADAV</span>
-          <span className="text-cyan-400 font-mono text-xs px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30">
+          <span className="hidden sm:inline text-cyan-400 font-mono text-xs px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30">
             PORTFOLIO 2026
           </span>
-        </a>
+        </button>
 
         {/* Right side: Mini Bouncing Ball Game & Quick Skip Pill */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <button
             onClick={triggerEnter}
-            className="font-mono text-xs text-zinc-400 hover:text-cyan-400 border border-white/10 hover:border-cyan-500/40 px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+            className="font-mono text-xs text-zinc-300 hover:text-cyan-400 border border-white/10 hover:border-cyan-500/40 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 bg-white/[0.03]"
           >
             <span>Skip</span>
             <ArrowRight size={12} />
           </button>
 
-          <div className={`loaderGame ${isClicked ? "loader-out" : ""}`}>
+          <div className={`loaderGame ${isClicked ? "loader-out" : ""} hidden sm:block`}>
             <div className="loaderGame-container">
               <div className="loaderGame-in">
                 {[...Array(27)].map((_, i) => (

@@ -60,7 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans bg-background text-zinc-100 min-h-screen selection:bg-lime selection:text-black antialiased`}
+        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans bg-background text-zinc-100 min-h-screen selection:bg-cyan-400 selection:text-black antialiased`}
       >
         <div className="fixed inset-0 pointer-events-none noise-overlay z-50 opacity-40" />
         {children}

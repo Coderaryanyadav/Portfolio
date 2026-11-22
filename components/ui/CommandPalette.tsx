@@ -11,9 +11,15 @@ interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectProject: (p: Project) => void;
+  onOpenResume?: () => void;
 }
 
-export default function CommandPalette({ isOpen, onClose, onSelectProject }: CommandPaletteProps) {
+export default function CommandPalette({
+  isOpen,
+  onClose,
+  onSelectProject,
+  onOpenResume,
+}: CommandPaletteProps) {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<Array<{ cmd: string; output: React.ReactNode }>>([
     {
@@ -54,9 +60,10 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
     if (clean === "help") {
       resultNode = (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-300 font-mono">
-          <div><button onClick={() => executeCommand("projects")} className="text-cyan-400 font-bold hover:underline">projects</button> : List all audited repositories</div>
+          <div><button onClick={() => executeCommand("projects")} className="text-cyan-400 font-bold hover:underline">projects</button> : List all 14 audited repositories</div>
           <div><button onClick={() => executeCommand("skills")} className="text-cyan-400 font-bold hover:underline">skills</button> : Inspect technical ecosystem</div>
           <div><button onClick={() => executeCommand("whoami")} className="text-cyan-400 font-bold hover:underline">whoami</button> : Display Aryan's bio</div>
+          <div><button onClick={() => executeCommand("resume")} className="text-cyan-400 font-bold hover:underline">resume / cv</button> : View Curriculum Vitae</div>
           <div><button onClick={() => executeCommand("contact")} className="text-cyan-400 font-bold hover:underline">contact</button> : Direct communication channels</div>
           <div><button onClick={() => executeCommand("github")} className="text-cyan-400 font-bold hover:underline">github</button> : Open GitHub profile</div>
           <div><span className="text-cyan-400 font-bold">open &lt;name&gt;</span> : Launch project case study</div>
@@ -70,10 +77,14 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
           <p className="text-zinc-400">{PERSONAL.aboutDetailed}</p>
         </div>
       );
+    } else if (clean === "resume" || clean === "cv") {
+      onOpenResume?.();
+      onClose();
+      resultNode = <span className="text-cyan-400">Opening Curriculum Vitae...</span>;
     } else if (clean === "projects" || clean === "ls") {
       resultNode = (
         <div className="space-y-2 text-xs font-mono">
-          <p className="text-zinc-500">Audited Projects (Click to inspect full architecture):</p>
+          <p className="text-zinc-500">All 14 Audited Projects (Click to inspect full architecture):</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {PROJECTS.map((p) => (
               <button
@@ -151,8 +162,9 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
           className="absolute inset-0 bg-black/85 backdrop-blur-md"
         />
 
-        {/* Terminal Window */}
+        {/* Terminal Window with data-lenis-prevent */}
         <motion.div
+          data-lenis-prevent="true"
           initial={{ opacity: 0, scale: 0.96, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 15 }}
@@ -177,7 +189,7 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
 
           {/* Quick Command Chips */}
           <div className="px-5 py-2 border-b border-white/5 bg-white/[0.01] flex flex-wrap gap-1.5 text-[11px]">
-            {["projects", "skills", "whoami", "contact", "clear"].map((cmd) => (
+            {["projects", "skills", "whoami", "resume", "contact", "clear"].map((cmd) => (
               <button
                 key={cmd}
                 onClick={() => executeCommand(cmd)}
@@ -189,7 +201,7 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
           </div>
 
           {/* Terminal Output */}
-          <div className="p-5 max-h-80 overflow-y-auto space-y-4 text-xs">
+          <div data-lenis-prevent="true" className="p-5 max-h-80 overflow-y-auto space-y-4 text-xs">
             {history.map((h, i) => (
               <div key={i} className="space-y-1.5">
                 <div className="flex items-center gap-2 text-cyan-400">
@@ -216,7 +228,7 @@ export default function CommandPalette({ isOpen, onClose, onSelectProject }: Com
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type command (e.g. 'open finauditpro', 'projects', 'skills')..."
+              placeholder="Type command (e.g. 'open finauditpro', 'projects', 'resume')..."
               className="w-full bg-transparent border-none text-white text-xs focus:outline-none font-mono placeholder:text-zinc-600"
             />
             <button
