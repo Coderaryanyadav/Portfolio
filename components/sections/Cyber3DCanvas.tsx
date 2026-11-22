@@ -8,7 +8,6 @@ export default function Cyber3DCanvas() {
   const [isSupported, setIsSupported] = useState(true);
 
   useEffect(() => {
-    // Check WebGL support & reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion || !mountRef.current) {
       setIsSupported(false);
@@ -35,30 +34,30 @@ export default function Cyber3DCanvas() {
       return;
     }
 
-    // Geometry: Dual Wireframe Icosahedron (Cyber Core)
+    // Geometry: Dual Wireframe Icosahedron (Cyber Core) in Deep Navy & Blue
     const innerGeo = new THREE.IcosahedronGeometry(1.4, 2);
     const innerMat = new THREE.MeshBasicMaterial({
-      color: 0x141416,
+      color: 0x1e293b,
       wireframe: true,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.5,
     });
     const innerMesh = new THREE.Mesh(innerGeo, innerMat);
     scene.add(innerMesh);
 
-    // Outer Lime Point Cloud
+    // Outer Electric Blue & Cyan Point Cloud
     const outerGeo = new THREE.IcosahedronGeometry(1.8, 2);
     const outerMat = new THREE.PointsMaterial({
-      color: 0xc6ff4d,
-      size: 0.035,
+      color: 0x00d2ff,
+      size: 0.038,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
     });
     const pointCloud = new THREE.Points(outerGeo, outerMat);
     scene.add(pointCloud);
 
-    // Floating Particles
-    const particleCount = 60;
+    // Floating Blue & White Dust Particles
+    const particleCount = 65;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
@@ -66,10 +65,10 @@ export default function Cyber3DCanvas() {
     }
     particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const particleMat = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.02,
+      color: 0x38bdf8,
+      size: 0.025,
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.35,
     });
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
@@ -90,11 +89,11 @@ export default function Cyber3DCanvas() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      innerMesh.rotation.x += 0.003;
-      innerMesh.rotation.y += 0.004;
+      innerMesh.rotation.x += 0.0025;
+      innerMesh.rotation.y += 0.0035;
 
       pointCloud.rotation.x -= 0.002;
-      pointCloud.rotation.y -= 0.003;
+      pointCloud.rotation.y -= 0.0028;
 
       // Mouse reactive tilt
       innerMesh.rotation.y += (mouseX * 0.5 - innerMesh.rotation.y) * 0.05;
@@ -108,7 +107,6 @@ export default function Cyber3DCanvas() {
 
     animate();
 
-    // Resize Handler
     const handleResize = () => {
       if (!container) return;
       const newWidth = container.clientWidth;
@@ -148,9 +146,9 @@ export default function Cyber3DCanvas() {
   return (
     <div className="relative w-full h-[420px] flex items-center justify-center overflow-hidden">
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] text-zinc-500 uppercase tracking-widest pointer-events-none flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full border border-white/5">
-        <span className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-        Interactive WebGL Cryptographic Lattice
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] text-zinc-400 uppercase tracking-widest pointer-events-none flex items-center gap-2 bg-[#080b14]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-sky-500/20 shadow-[0_0_20px_rgba(0,210,255,0.15)]">
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        Interactive WebGL Cryptographic Core
       </div>
     </div>
   );

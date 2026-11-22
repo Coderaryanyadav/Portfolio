@@ -32,9 +32,9 @@ export default function HeroSection() {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen flex flex-col justify-between pt-28 pb-12 px-6 sm:px-10 overflow-hidden cyber-grid border-b border-white/5"
     >
-      {/* Ambient background glow */}
+      {/* Ambient background blue glow */}
       <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-lime/10 blur-[140px] pointer-events-none"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-500/15 blur-[150px] pointer-events-none"
         style={{
           transform: `translate(calc(-50% + ${coords.x * 2}px), calc(-50% + ${coords.y * 2}px))`,
           transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",

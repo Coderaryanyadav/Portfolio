@@ -36,7 +36,7 @@ export const PROJECTS: Project[] = [
     featured: true,
     githubUrl: "https://github.com/Coderaryanyadav/FinAuditPro",
     year: "2024",
-    accentColor: "#C6FF4D",
+    accentColor: "#00D2FF",
     caseStudy: {
       overview:
         "FinAuditPro is an air-gapped financial audit companion designed to assist Chartered Accountants in navigating complex Indian compliance frameworks (ICAI standards, Section 43B(h), 269ST cash thresholds, and GSTR-2B vs Books reconciliation) without transmitting sensitive client financials to external cloud LLM providers.",

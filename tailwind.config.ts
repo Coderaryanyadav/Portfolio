@@ -11,24 +11,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#080808",
+        background: "#050608",
         surface: {
-          50: "#18181b",
-          100: "#141416",
-          200: "#111111",
-          300: "#0d0d0f",
-          border: "#1f1f23",
-          hover: "#27272a",
+          50: "#181c28",
+          100: "#111420",
+          200: "#0c0e17",
+          300: "#07080f",
+          border: "#171c2d",
+          hover: "#222940",
         },
+        // Mapped to Electric Cyan-Blue (#00D2FF / #38BDF8)
         lime: {
-          DEFAULT: "#C6FF4D",
-          glow: "rgba(198, 255, 77, 0.15)",
-          dim: "#9acb37",
+          DEFAULT: "#00D2FF",
+          glow: "rgba(0, 210, 255, 0.25)",
+          dim: "#0284c7",
+          bright: "#38bdf8",
+        },
+        cyber: {
+          blue: "#00D2FF",
+          deep: "#2563EB",
+          sky: "#38BDF8",
+          navy: "#0a0f1d",
         },
         zinc: {
-          850: "#1c1c1f",
-          950: "#0c0c0e",
-        }
+          850: "#181b24",
+          950: "#080a10",
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
