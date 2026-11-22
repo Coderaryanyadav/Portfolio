@@ -401,3 +401,319 @@ body {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(0%); }
 }
+
+/* =========================================================================
+   MONCY.DEV 3D CHARACTER WORKSTATION & SCROLL CHOREOGRAPHY (IMAGES 2 & 3)
+   ========================================================================= */
+
+.character-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.character-model {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: none;
+}
+
+.character-canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.character-canvas-wrapper canvas {
+  pointer-events: none;
+}
+
+/* Signature Ambient Rim Glow (Image 2) */
+.character-rim {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46%) scale(1.35);
+  background: radial-gradient(circle, rgba(196, 129, 255, 0.45) 0%, rgba(0, 210, 255, 0.35) 45%, transparent 70%);
+  box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
+  filter: blur(55px);
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease-out;
+}
+
+.character-hover {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 25;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* =========================================================================
+   WHAT I DO SECTION STYLING (IMAGE 3)
+   ========================================================================= */
+
+.whatIDO {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1920px;
+  margin: auto;
+  z-index: 12;
+}
+
+.what-box {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 12;
+}
+
+.what-box h2 {
+  font-size: calc(3.8vw + 24px);
+  line-height: calc(3.8vw + 18px);
+  margin-right: 12%;
+}
+
+.hat-h2 {
+  font-style: italic;
+}
+
+.do-h2 {
+  color: #00d2ff;
+  text-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+}
+
+.what-box-in {
+  flex-direction: column;
+  height: 520px;
+  margin-left: 120px;
+  position: relative;
+  display: flex;
+}
+
+.what-content {
+  width: 460px;
+  height: 50%;
+  min-height: 50%;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  padding: 36px 44px;
+  box-sizing: border-box;
+  cursor: pointer;
+  background: rgba(9, 11, 20, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+.what-noTouch:hover,
+.what-content-active {
+  min-height: 68%;
+  padding: 34px 44px;
+  background: rgba(9, 11, 20, 0.85);
+}
+
+.what-noTouch:hover ~ .what-content,
+.what-box-in:hover .what-noTouch:not(:hover),
+.what-content.what-sibling {
+  min-height: 32%;
+  padding: 16px 44px;
+  opacity: 0.65;
+}
+
+.what-content-in {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Corner crosshairs ⌜ ⌝ ⌞ ⌟ */
+.what-content::before,
+.what-corner::before,
+.what-content::after,
+.what-corner::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  border: 3px solid #00d2ff;
+  opacity: 1;
+}
+
+.what-content::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.what-corner::before {
+  top: -2px;
+  right: -2px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.what-content::after {
+  bottom: -2px;
+  left: -2px;
+  border-top: none;
+  border-right: none;
+}
+
+.what-corner::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+.what-arrow {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(0, 210, 255, 0.5);
+  border-radius: 4px;
+}
+
+.what-arrow::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-left: 2px solid #00d2ff;
+  border-bottom: 2px solid #00d2ff;
+  transition: transform 0.4s ease;
+  width: 8px;
+  height: 8px;
+}
+
+.what-noTouch:hover .what-arrow::before,
+.what-content-active .what-arrow::before {
+  transform: translate(-50%, -20%) rotate(-225deg);
+}
+
+.what-border1 {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  transition: 0.5s;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.what-border1 svg {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 460px;
+}
+
+.what-border2 {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.what-border2 svg {
+  height: 520px;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+}
+
+.what-content-flex {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.what-tags {
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-space-grotesk);
+  padding: 3px 10px;
+  background-color: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  color: #ededed;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.what-tags:hover {
+  background-color: rgba(0, 210, 255, 0.2);
+  border-color: #00d2ff;
+  color: #00d2ff;
+}
+
+/* Responsiveness */
+@media only screen and (max-width: 1024px) {
+  .character-container {
+    position: absolute;
+    height: 80vh;
+  }
+  .whatIDO {
+    height: auto;
+    padding: 60px 0;
+  }
+  .what-box-in {
+    margin-left: 0;
+    height: auto;
+  }
+  .what-content {
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 20px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .whatIDO {
+    flex-direction: column;
+  }
+  .what-box {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .what-box h2 {
+    margin-right: 0;
+    margin-bottom: 40px;
+  }
+  .what-box-in {
+    margin-left: 0;
+  }
+}

@@ -12,8 +12,8 @@ const pillarIcons = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative">
-      <div className="max-w-7xl mx-auto space-y-16 sm:space-y-24">
+    <section id="about" className="about-section py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative z-10">
+      <div className="about-me max-w-7xl mx-auto space-y-16 sm:space-y-24">
         {/* Section Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">

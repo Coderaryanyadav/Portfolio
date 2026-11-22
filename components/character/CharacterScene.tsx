@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { typingBoneNames, eyebrowBoneNames } from "@/data/boneData";
 
 interface CharacterSceneProps {
@@ -16,13 +17,14 @@ interface CharacterSceneProps {
 export default function CharacterScene({ onLoaded, className = "" }: CharacterSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const hoverRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
     if (!mountRef.current) return;
     const container = mountRef.current;
-    let width = container.clientWidth || window.innerWidth;
-    let height = container.clientHeight || window.innerHeight * 0.75;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     let aspect = width / height;
 
     // Three.js Scene Setup
@@ -31,25 +33,33 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
+    // Initial Camera Setup - exact front-facing bust view from moncy.dev
     const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
     camera.position.set(0, 13.1, 24.7);
     camera.zoom = 1.1;
     camera.updateProjectionMatrix();
 
-    // Lighting (Cyber Blue palette)
+    // Lighting (Cyber Blue & Lavender palette matching Image 2 & Image 3)
     const directionalLight = new THREE.DirectionalLight(0x00d2ff, 0);
     directionalLight.position.set(-0.47, -0.32, -1);
     directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.camera.near = 0.5;
+    directionalLight.shadow.camera.far = 50;
     scene.add(directionalLight);
 
-    const pointLight = new THREE.PointLight(0x38bdf8, 0, 100, 3);
+    const pointLight = new THREE.PointLight(0x00d2ff, 0, 100, 3);
     pointLight.position.set(3, 12, 4);
+    pointLight.castShadow = true;
     scene.add(pointLight);
 
-    // HDR Environment Reflection
+    // Load Environment HDR
     try {
       new RGBELoader().setPath("/models/").load(
         "char_enviorment.hdr",
@@ -60,9 +70,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           scene.environmentRotation.set(5.76, 85.85, 1);
         },
         undefined,
-        (err) => {
-          console.warn("HDR load warning:", err);
-        }
+        (err) => console.warn("HDR load warning:", err)
       );
     } catch (e) {
       console.warn("RGBELoader error:", e);
@@ -76,12 +84,15 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
     let mixer: THREE.AnimationMixer | null = null;
     let headBone: THREE.Object3D | null = null;
+    let neckBone: THREE.Object3D | null = null;
     let screenLight: any = null;
+    let monitorMesh: any = null;
+    let monitorContainer: any = null;
     let eyeBrowUpAction: THREE.AnimationAction | null = null;
     let characterMesh: THREE.Object3D | null = null;
     let isHovering = false;
+    let scrollTriggers: ScrollTrigger[] = [];
 
-    // Load the 3D Character
     loader.load(
       "/models/character.glb",
       async (gltf) => {
@@ -97,27 +108,41 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           }
         });
 
-        // Bone offsets for proper chair positioning
+        // Bone offsets for proper chair alignment
         const footR = char.getObjectByName("footR");
         const footL = char.getObjectByName("footL");
         if (footR) footR.position.y = 3.36;
         if (footL) footL.position.y = 3.36;
 
         headBone = char.getObjectByName("spine006") || null;
-        screenLight = char.getObjectByName("screenlight") || null;
+        neckBone = char.getObjectByName("spine005") || null;
 
-        // Turn on monitor glow
+        // Monitor & Screenlight: HIDE AND LOWER IN THE HERO SECTION (matching Image 2)
+        // They will smoothly rise and fade in during scroll into "What I Do" (matching Image 3)
         char.traverse((object: any) => {
-          if (object.name === "screenlight") {
-            object.material.transparent = true;
-            object.material.opacity = 1;
-            object.material.emissive.set("#00D2FF");
-            object.material.emissiveIntensity = 4;
+          if (object.name === "Plane004") {
+            monitorContainer = object;
+            // Lower below desk level so it never peeks over the character's face in the Hero
+            object.position.set(0, -10, 2);
+            object.traverse((child: any) => {
+              if (child.material) {
+                child.material.transparent = true;
+                child.material.opacity = 0; // completely invisible at start
+                if (child.material.name === "Material.027") {
+                  monitorMesh = child;
+                  child.material.color.set("#00D2FF");
+                }
+              }
+            });
           }
-          if (object.material && object.material.name === "Material.027") {
-            object.material.transparent = true;
-            object.material.opacity = 1;
-            object.material.color.set("#00D2FF");
+          if (object.name === "screenlight") {
+            screenLight = object;
+            if (object.material) {
+              object.material.transparent = true;
+              object.material.opacity = 0; // completely invisible at start
+              object.material.emissive.set("#00D2FF");
+              object.material.emissiveIntensity = 4;
+            }
           }
         });
 
@@ -126,7 +151,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         // Setup Animations
         if (gltf.animations && gltf.animations.length > 0) {
-          // Intro
+          // Intro animation
           const introClip = gltf.animations.find((c) => c.name === "introAnimation");
           if (introClip) {
             const introAction = mixer.clipAction(introClip);
@@ -165,7 +190,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             blinkAction.play().fadeIn(0.5);
           }
 
-          // Brow Up for interactive face hover
+          // Eyebrow Up for interactive face hover
           const browClip = THREE.AnimationClip.findByName(gltf.animations, "browup");
           if (browClip && mixer) {
             const browTracks = browClip.tracks.filter((track) =>
@@ -178,7 +203,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           }
         }
 
-        // Fade in scene lighting with GSAP
+        // Fade in lighting & rim glow
         gsap.to(scene, {
           environmentIntensity: 0.65,
           duration: 1.8,
@@ -190,24 +215,117 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           ease: "power2.inOut",
         });
         gsap.to(".character-rim", {
-          opacity: 0.85,
-          scale: 1.2,
-          duration: 2,
+          opacity: 0.9,
+          duration: 1.8,
           ease: "power2.out",
         });
 
-        setIsLoading(false);
+        // Register GSAP ScrollTrigger Choreography (Exact moncy.dev timeline)
+        if (window.innerWidth > 1024) {
+          let intensity = 1;
+          const flickerInterval = setInterval(() => {
+            intensity = 0.5 + Math.random() * 0.8;
+          }, 200);
+
+          // TL1: Hero Section Scroll -> Character turns slightly, camera zooms out, hero typography fades
+          const tl1 = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".landing-section",
+              start: "top top",
+              end: "bottom top",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+          tl1
+            .fromTo(char.rotation, { y: 0 }, { y: 0.7, duration: 1 }, 0)
+            .to(camera.position, { z: 22 }, 0)
+            .fromTo(".character-model", { x: 0 }, { x: "-25%", duration: 1 }, 0)
+            .to(".landing-container", { opacity: 0, duration: 0.4 }, 0)
+            .to(".landing-container", { y: "40%", duration: 0.8 }, 0)
+            .fromTo(".about-me", { y: "-50%" }, { y: "0%" }, 0);
+
+          // TL2: About Section -> Transition into "What I Do" (Workstation reveal!)
+          const tl2 = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".about-section",
+              start: "center 55%",
+              end: "bottom top",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          tl2
+            .to(camera.position, { z: 75, y: 8.4, duration: 6, delay: 1, ease: "power3.inOut" }, 0)
+            .to(".about-section", { y: "30%", duration: 6 }, 0)
+            .to(".about-section", { opacity: 0, delay: 3, duration: 2 }, 0)
+            .fromTo(
+              ".character-model",
+              { pointerEvents: "inherit" },
+              { pointerEvents: "none", x: "-12%", delay: 1, duration: 5 },
+              0
+            )
+            .to(char.rotation, { y: 0.92, x: 0.12, delay: 2, duration: 3 }, 0);
+
+          if (neckBone) {
+            tl2.to(neckBone.rotation, { x: 0.6, delay: 2, duration: 3 }, 0);
+          }
+
+          // Monitor & screen light rise and turn on
+          if (monitorMesh && monitorContainer) {
+            tl2
+              .fromTo(monitorContainer.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0)
+              .to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
+          }
+
+          if (screenLight) {
+            tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 3.8 }, 0);
+          }
+
+          tl2
+            .fromTo(".what-box-in", { display: "none" }, { display: "flex", duration: 0.1, delay: 5 }, 0)
+            .fromTo(
+              ".character-rim",
+              { opacity: 0.9, scale: 1.3 },
+              { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 1 },
+              0
+            );
+
+          // TL3: What I Do Section -> Character stays seated typing, then glides up past viewport
+          const tl3 = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".whatIDO",
+              start: "top top",
+              end: "bottom top",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          tl3
+            .fromTo(
+              ".character-model",
+              { y: "0%" },
+              { y: "-110%", duration: 4, ease: "none", delay: 1 },
+              0
+            )
+            .fromTo(".whatIDO", { y: 0 }, { y: "15%", duration: 2 }, 0)
+            .to(char.rotation, { x: -0.04, duration: 2, delay: 1 }, 0);
+
+          if (tl1.scrollTrigger) scrollTriggers.push(tl1.scrollTrigger);
+          if (tl2.scrollTrigger) scrollTriggers.push(tl2.scrollTrigger);
+          if (tl3.scrollTrigger) scrollTriggers.push(tl3.scrollTrigger);
+        }
+
         onLoaded?.();
         dracoLoader.dispose();
       },
       undefined,
-      (err) => {
-        console.error("Failed to load character GLB:", err);
-        setIsLoading(false);
-      }
+      (err) => console.error("Failed to load character GLB:", err)
     );
 
-    // Interactive Hover on Face
+    // Interactive Eyebrow Hover on Face
     const handleFaceEnter = () => {
       if (eyeBrowUpAction && !isHovering) {
         isHovering = true;
@@ -231,7 +349,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       hoverDiv.addEventListener("mouseleave", handleFaceLeave);
     }
 
-    // Mouse & Touch Tracking
+    // Mouse Tracking for Head Rotation
     let mouse = { x: 0, y: 0 };
     let targetRotation = { x: 0, y: 0 };
 
@@ -240,33 +358,18 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-      }
-    };
-
-    const handleTouchEnd = () => {
-      setTimeout(() => {
-        mouse.x = 0;
-        mouse.y = 0;
-      }, 1500);
-    };
-
     window.addEventListener("mousemove", handleWindowMouseMove);
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd);
 
     // Resize Handler
     const handleWindowResize = () => {
       if (!mountRef.current) return;
-      width = mountRef.current.clientWidth || window.innerWidth;
-      height = mountRef.current.clientHeight || window.innerHeight * 0.75;
+      width = window.innerWidth;
+      height = window.innerHeight;
       aspect = width / height;
       camera.aspect = aspect;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
+      ScrollTrigger.refresh();
     };
     window.addEventListener("resize", handleWindowResize);
 
@@ -277,9 +380,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Rotate head smoothly towards mouse
-      if (headBone && window.scrollY < 400) {
-        const maxRotY = Math.PI / 5.5;
+      // Rotate head smoothly towards mouse when in hero section
+      if (headBone && window.scrollY < 300) {
+        const maxRotY = Math.PI / 6;
         const maxRotX = 0.35;
         const minRotX = -0.25;
 
@@ -291,11 +394,11 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, targetRotation.y, 0.08);
         headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, targetRotation.x, 0.06);
+      }
 
-        // Point light sync with monitor
-        if (screenLight && screenLight.material) {
-          pointLight.intensity = (screenLight.material.emissiveIntensity || 4) * 2.5;
-        }
+      // Point light sync with monitor screen
+      if (screenLight && screenLight.material && screenLight.material.opacity > 0.5) {
+        pointLight.intensity = (screenLight.material.emissiveIntensity || 4) * 2.5;
       }
 
       const delta = clock.getDelta();
@@ -309,8 +412,6 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", handleWindowMouseMove);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", handleWindowResize);
 
       if (hoverDiv) {
@@ -318,6 +419,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
         hoverDiv.removeEventListener("mouseleave", handleFaceLeave);
       }
 
+      scrollTriggers.forEach((st) => st.kill());
       scene.clear();
       renderer.dispose();
       dracoLoader.dispose();
@@ -328,17 +430,19 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
   }, [onLoaded]);
 
   return (
-    <div className={`relative w-full h-full flex items-center justify-center select-none ${className}`}>
-      {/* Background Electric Blue Rim Glow */}
-      <div className="character-rim absolute w-[340px] sm:w-[480px] h-[340px] sm:h-[480px] rounded-full bg-cyan-500/20 blur-[80px] pointer-events-none transition-all duration-1000 -z-10 opacity-0 transform translate-y-12" />
+    <div className={`character-container ${className}`}>
+      <div className="character-model">
+        {/* Luminous Purple & Cyan Rim Glow (Image 2) */}
+        <div className="character-rim" />
 
-      {/* 3D Canvas Container */}
-      <div ref={mountRef} className="w-full h-full relative z-10 flex items-center justify-center pointer-events-none">
-        {/* Face Hover Catchbox */}
+        {/* 3D Canvas Mount */}
+        <div ref={mountRef} className="character-canvas-wrapper" />
+
+        {/* Interactive Eyebrow Hover Hitbox (Image 2) */}
         <div
           ref={hoverRef}
-          className="absolute w-36 h-36 top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full z-20 pointer-events-auto cursor-pointer"
-          title="Looking at me? (Hover to raise eyebrows)"
+          className="character-hover"
+          title="Looking at me? (Hover face to raise eyebrows)"
         />
       </div>
     </div>

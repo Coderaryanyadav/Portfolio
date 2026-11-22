@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import CharacterScene from "@/components/character/CharacterScene";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
+import WhatIDoSection from "@/components/sections/WhatIDoSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
 import JourneySection from "@/components/sections/JourneySection";
@@ -47,8 +49,17 @@ export default function Home() {
           onOpenResume={() => setResumeOpen(true)}
         />
 
-        {/* Hero Section with Interactive 3D Character Model */}
+        {/* Fixed 3D Character Model (Orchestrated by GSAP across Hero -> About -> WhatIDo) */}
+        <CharacterScene />
+
+        {/* Hero Section matching Image 2 (Front-facing bust, clear face/smile/cap, zero screen occlusion) */}
         <HeroSection />
+
+        {/* Phase 01: Identity & About (Scroll transition bridge) */}
+        <AboutSection />
+
+        {/* Signature Moncy Workstation Typing & What I Do (matching Image 3) */}
+        <WhatIDoSection />
 
         {/* Continuous Ticker Ribbon #1 */}
         <ContinuousMarquee
@@ -63,9 +74,6 @@ export default function Home() {
           direction="left"
           speedSeconds={32}
         />
-
-        {/* Phase 01: Identity & About */}
-        <AboutSection />
 
         {/* Phase 02: Featured Projects & Case Studies */}
         <ProjectsSection onOpenProject={(p) => setActiveCaseStudyProject(p)} />
