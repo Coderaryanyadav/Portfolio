@@ -15,16 +15,26 @@ import CommandPalette from "@/components/ui/CommandPalette";
 import ResumeModal from "@/components/ui/ResumeModal";
 import CaseStudyModal from "@/components/sections/CaseStudyModal";
 import SmoothScroll from "@/components/layout/SmoothScroll";
+import MoncyLoader from "@/components/ui/MoncyLoader";
+import ContinuousMarquee from "@/components/ui/ContinuousMarquee";
 import { Project } from "@/data/projects";
 
 export default function Home() {
+  const [loaderComplete, setLoaderComplete] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
   const [activeCaseStudyProject, setActiveCaseStudyProject] = useState<Project | null>(null);
 
   return (
     <SmoothScroll>
-      <main className="relative min-h-screen bg-background text-zinc-100 flex flex-col selection:bg-cyan-400 selection:text-black">
+      {/* Signature moncy.dev Interactive Preloader with Bouncing Ball Minigame & Portal Reveal */}
+      <MoncyLoader onComplete={() => setLoaderComplete(true)} />
+
+      <main
+        className={`relative min-h-screen bg-background text-zinc-100 flex flex-col selection:bg-cyan-400 selection:text-black transition-opacity duration-1000 ${
+          loaderComplete ? "opacity-100" : "opacity-95"
+        }`}
+      >
         {/* Desktop Magnetic Follower Cursor */}
         <CustomCursor />
 
@@ -37,11 +47,39 @@ export default function Home() {
         {/* Hero Section */}
         <HeroSection />
 
+        {/* Moncy-style Infinite Continuous Ticker Ribbon #1 */}
+        <ContinuousMarquee
+          items={[
+            "Offline AI & RAG",
+            "Statutory Rule Engines",
+            "Spatial GIS Logistics",
+            "Cybersecurity & AES Ciphers",
+            "Cross-Platform Flutter & React Native",
+            "Blockchain Solidity Verification",
+          ]}
+          direction="left"
+          speedSeconds={32}
+        />
+
         {/* Phase 01: Identity & About */}
         <AboutSection />
 
         {/* Phase 02: Featured Projects & Case Studies */}
         <ProjectsSection onOpenProject={(p) => setActiveCaseStudyProject(p)} />
+
+        {/* Moncy-style Infinite Continuous Ticker Ribbon #2 */}
+        <ContinuousMarquee
+          items={[
+            "FinAuditPro Desktop",
+            "ApnaGate Guard System",
+            "Tankr Spatial Dispatch",
+            "AegisAI Air-Gapped RAG",
+            "Opskl Shift Monorepo",
+            "AyurChain Web3 Verification",
+          ]}
+          direction="right"
+          speedSeconds={28}
+        />
 
         {/* Phase 03: Technical Ecosystem */}
         <SkillsSection />
