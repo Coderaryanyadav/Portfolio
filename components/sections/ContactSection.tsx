@@ -10,35 +10,53 @@ import {
   Github,
   Linkedin,
   Send,
-  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
 import Cyber3DCanvas from "./Cyber3DCanvas";
-import MagneticButton from "../ui/MagneticButton";
+import { sounds } from "@/lib/sound";
 
 export default function ContactSection() {
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleCopyEmail = () => {
+    sounds.playClick();
     navigator.clipboard.writeText(PERSONAL.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    sounds.playClick();
+    setStatus("submitting");
+    setErrorMessage("");
 
-    setSubmitting(true);
-    // Simulating verified form send
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
-    }, 1000);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        sounds.playSuccess();
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+        setErrorMessage(data.error || "Failed to submit message. Please try again.");
+      }
+    } catch (err) {
+      // Graceful fallback to mailto
+      setStatus("error");
+      setErrorMessage("Network error. You can also send an email directly using the button above.");
+    }
   };
 
   return (
@@ -49,8 +67,8 @@ export default function ContactSection() {
 
         {/* Section Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-lime uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-lime" />
+          <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
             <span>06 — Communication & Inquiry</span>
           </div>
           <h2 className="text-4xl sm:text-6xl md:text-7xl font-heading font-extrabold tracking-tight text-white max-w-4xl">
@@ -62,12 +80,12 @@ export default function ContactSection() {
         </div>
 
         {/* Giant Interactive Email Copy CTA */}
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#0d0d12] border border-white/10 hover:border-lime/40 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group">
+        <div className="p-8 sm:p-12 rounded-3xl bg-[#090b12] border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group">
           <div className="space-y-2">
-            <span className="font-mono text-xs text-lime uppercase tracking-widest block">
+            <span className="font-mono text-xs text-cyan-400 uppercase tracking-widest block">
               Direct Contact
             </span>
-            <span className="font-heading font-bold text-2xl sm:text-4xl md:text-5xl text-white group-hover:text-lime transition-colors break-all">
+            <span className="font-heading font-bold text-2xl sm:text-4xl md:text-5xl text-white group-hover:text-cyan-400 transition-colors break-all">
               {PERSONAL.email}
             </span>
           </div>
@@ -80,7 +98,7 @@ export default function ContactSection() {
             >
               {copied ? (
                 <>
-                  <Check size={16} className="text-lime" />
+                  <Check size={16} className="text-cyan-400" />
                   <span>Email Copied!</span>
                 </>
               ) : (
@@ -92,8 +110,9 @@ export default function ContactSection() {
             </button>
 
             <a
-              href={`mailto:${PERSONAL.email}`}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-lime text-black font-heading font-bold text-xs uppercase tracking-wider hover:shadow-[0_0_25px_rgba(198,255,77,0.3)] transition-all"
+              href={`mailto:${PERSONAL.email}?subject=Collaboration%20Inquiry&body=Hi%20Aryan,%0A%0AI%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20regarding...`}
+              onClick={() => sounds.playClick()}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs uppercase tracking-wider hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
             >
               <Mail size={16} />
               <span>Compose Email</span>
@@ -101,39 +120,46 @@ export default function ContactSection() {
           </div>
         </div>
 
-        {/* Grid: Form + Social Networks */}
+        {/* Grid: Form + Verified Profiles */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Contact Form */}
-          <div className="lg:col-span-7 bg-[#0b0b0e] border border-white/10 rounded-3xl p-8 sm:p-10 space-y-6">
+          {/* Left: Contact Form Wired to Backend Route */}
+          <div className="lg:col-span-7 bg-[#090b12] border border-white/10 rounded-3xl p-8 sm:p-10 space-y-6">
             <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <h3 className="font-heading font-bold text-xl text-white">
                 Send a Direct Message
               </h3>
-              <span className="font-mono text-xs text-zinc-500">Fast Response</span>
+              <span className="font-mono text-xs text-zinc-500">Live Endpoint</span>
             </div>
 
-            {submitted ? (
+            {status === "success" ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-8 rounded-2xl bg-lime/10 border border-lime/30 text-center space-y-3"
+                className="p-8 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-center space-y-3"
               >
-                <div className="w-12 h-12 rounded-full bg-lime/20 flex items-center justify-center mx-auto text-lime">
+                <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto text-cyan-400">
                   <Check size={24} />
                 </div>
-                <h4 className="font-heading font-bold text-lg text-white">Message Received</h4>
+                <h4 className="font-heading font-bold text-lg text-white">Transmission Successful</h4>
                 <p className="text-xs font-mono text-zinc-300">
-                  Thank you! I will review your message and reply promptly.
+                  Thank you! Your inquiry was logged and I will review it promptly.
                 </p>
                 <button
-                  onClick={() => setSubmitted(false)}
-                  className="font-mono text-xs text-lime underline pt-2"
+                  onClick={() => setStatus("idle")}
+                  className="font-mono text-xs text-cyan-400 underline pt-2"
                 >
                   Send another message
                 </button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {status === "error" && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-2 text-rose-300 text-xs font-mono">
+                    <AlertCircle size={15} />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="font-mono text-xs text-zinc-400">Your Name</label>
@@ -143,7 +169,7 @@ export default function ContactSection() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Alex"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-lime/60 focus:outline-none text-sm text-white font-sans transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-cyan-500/60 focus:outline-none text-sm text-white font-sans transition-colors"
                     />
                   </div>
 
@@ -155,7 +181,7 @@ export default function ContactSection() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="alex@domain.com"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-lime/60 focus:outline-none text-sm text-white font-sans transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-cyan-500/60 focus:outline-none text-sm text-white font-sans transition-colors"
                     />
                   </div>
                 </div>
@@ -168,17 +194,17 @@ export default function ContactSection() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell me about your project, idea, or opportunity..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-lime/60 focus:outline-none text-sm text-white font-sans transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 focus:border-cyan-500/60 focus:outline-none text-sm text-white font-sans transition-colors resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  disabled={submitting}
-                  className="w-full py-4 rounded-xl bg-white/10 hover:bg-lime hover:text-black text-white font-heading font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                  disabled={status === "submitting"}
+                  className="w-full py-4 rounded-xl bg-cyan-500/20 hover:bg-cyan-400 hover:text-black border border-cyan-500/40 text-cyan-300 font-heading font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
                 >
-                  {submitting ? (
-                    <span>Transmitting...</span>
+                  {status === "submitting" ? (
+                    <span>Transmitting Message...</span>
                   ) : (
                     <>
                       <span>Transmit Message</span>
@@ -192,7 +218,7 @@ export default function ContactSection() {
 
           {/* Right: Verified Professional Channels */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-8 rounded-3xl bg-[#0b0b0e] border border-white/10 space-y-6">
+            <div className="p-8 rounded-3xl bg-[#090b12] border border-white/10 space-y-6">
               <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest block border-b border-white/5 pb-4">
                 Verified Profiles
               </span>
@@ -203,20 +229,21 @@ export default function ContactSection() {
                   href={PERSONAL.links.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-lime/40 group transition-all"
+                  onClick={() => sounds.playClick()}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-cyan-500/40 group transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-zinc-300 group-hover:text-lime transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-zinc-300 group-hover:text-cyan-400 transition-colors">
                       <Github size={20} />
                     </div>
                     <div>
-                      <h4 className="font-heading font-bold text-sm text-white group-hover:text-lime transition-colors">
+                      <h4 className="font-heading font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">
                         GitHub Profile
                       </h4>
                       <span className="font-mono text-xs text-zinc-400">@{PERSONAL.handle}</span>
                     </div>
                   </div>
-                  <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-lime group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 {/* LinkedIn */}
@@ -224,26 +251,27 @@ export default function ContactSection() {
                   href={PERSONAL.links.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-lime/40 group transition-all"
+                  onClick={() => sounds.playClick()}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-cyan-500/40 group transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-zinc-300 group-hover:text-lime transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-zinc-300 group-hover:text-cyan-400 transition-colors">
                       <Linkedin size={20} />
                     </div>
                     <div>
-                      <h4 className="font-heading font-bold text-sm text-white group-hover:text-lime transition-colors">
+                      <h4 className="font-heading font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">
                         LinkedIn
                       </h4>
                       <span className="font-mono text-xs text-zinc-400">aryan-yadav</span>
                     </div>
                   </div>
-                  <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-lime group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
               </div>
 
               <div className="pt-4 border-t border-white/5 text-xs font-mono text-zinc-500 space-y-1">
                 <div className="flex items-center gap-1.5 text-zinc-400">
-                  <span className="w-2 h-2 rounded-full bg-lime" />
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
                   <span>Based in Mumbai, Maharashtra, India</span>
                 </div>
                 <p className="text-zinc-400">

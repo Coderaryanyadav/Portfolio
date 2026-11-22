@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -8,39 +11,72 @@ import SkillsSection from "@/components/sections/SkillsSection";
 import JourneySection from "@/components/sections/JourneySection";
 import GitHubSection from "@/components/sections/GitHubSection";
 import ContactSection from "@/components/sections/ContactSection";
+import CommandPalette from "@/components/ui/CommandPalette";
+import ResumeModal from "@/components/ui/ResumeModal";
+import CaseStudyModal from "@/components/sections/CaseStudyModal";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import { Project } from "@/data/projects";
 
 export default function Home() {
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [activeCaseStudyProject, setActiveCaseStudyProject] = useState<Project | null>(null);
+
   return (
-    <main className="relative min-h-screen bg-background text-zinc-100 flex flex-col selection:bg-lime selection:text-black">
-      {/* Desktop Magnetic Follower Cursor */}
-      <CustomCursor />
+    <SmoothScroll>
+      <main className="relative min-h-screen bg-background text-zinc-100 flex flex-col selection:bg-cyan-400 selection:text-black">
+        {/* Desktop Magnetic Follower Cursor */}
+        <CustomCursor />
 
-      {/* Floating Navigation Pill */}
-      <Navbar />
+        {/* Floating Navigation Pill */}
+        <Navbar
+          onOpenTerminal={() => setTerminalOpen(true)}
+          onOpenResume={() => setResumeOpen(true)}
+        />
 
-      {/* Hero Section */}
-      <HeroSection />
+        {/* Hero Section */}
+        <HeroSection />
 
-      {/* Phase 01: Identity & About */}
-      <AboutSection />
+        {/* Phase 01: Identity & About */}
+        <AboutSection />
 
-      {/* Phase 02: Featured Projects & Case Studies */}
-      <ProjectsSection />
+        {/* Phase 02: Featured Projects & Case Studies */}
+        <ProjectsSection onOpenProject={(p) => setActiveCaseStudyProject(p)} />
 
-      {/* Phase 03: Technical Ecosystem */}
-      <SkillsSection />
+        {/* Phase 03: Technical Ecosystem */}
+        <SkillsSection />
 
-      {/* Phase 04: Engineering Journey */}
-      <JourneySection />
+        {/* Phase 04: Engineering Journey */}
+        <JourneySection />
 
-      {/* Phase 05: GitHub Audited Repositories */}
-      <GitHubSection />
+        {/* Phase 05: GitHub Audited Repositories */}
+        <GitHubSection />
 
-      {/* Phase 06: Contact & Direct Call to Action */}
-      <ContactSection />
+        {/* Phase 06: Contact & Direct Call to Action */}
+        <ContactSection />
 
-      {/* Footer */}
-      <Footer />
-    </main>
+        {/* Footer */}
+        <Footer />
+
+        {/* Interactive Developer Terminal (⌘K) */}
+        <CommandPalette
+          isOpen={terminalOpen}
+          onClose={() => setTerminalOpen(false)}
+          onSelectProject={(p) => setActiveCaseStudyProject(p)}
+        />
+
+        {/* Interactive Curriculum Vitae Modal */}
+        <ResumeModal
+          isOpen={resumeOpen}
+          onClose={() => setResumeOpen(false)}
+        />
+
+        {/* Case Study Modal from Terminal or Deep Links */}
+        <CaseStudyModal
+          project={activeCaseStudyProject}
+          onClose={() => setActiveCaseStudyProject(null)}
+        />
+      </main>
+    </SmoothScroll>
   );
 }

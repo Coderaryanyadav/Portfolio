@@ -57,7 +57,7 @@ body {
 /* Subtle Grid with soft cyan/blue nodes */
 .cyber-grid {
   background-size: 60px 60px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(0, 210, 255, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 210, 255, 0.04) 1px, transparent 1px);
 }
