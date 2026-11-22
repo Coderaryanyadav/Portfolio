@@ -5,6 +5,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
+import WhatIDoSection from "@/components/sections/WhatIDoSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import SkillsSection from "@/components/sections/SkillsSection";
@@ -44,7 +45,7 @@ export default function Home() {
           onOpenResume={() => setResumeOpen(true)}
         />
 
-        {/* Hero Section */}
+        {/* Hero / Landing Section */}
         <HeroSection />
 
         {/* Moncy-style Infinite Continuous Ticker Ribbon #1 */}
@@ -60,6 +61,9 @@ export default function Home() {
           direction="left"
           speedSeconds={32}
         />
+
+        {/* Moncy-style Signature "WHAT I DO" Discipline Section */}
+        <WhatIDoSection />
 
         {/* Phase 01: Identity & About */}
         <AboutSection />
@@ -84,7 +88,7 @@ export default function Home() {
         {/* Phase 03: Technical Ecosystem */}
         <SkillsSection />
 
-        {/* Phase 04: Engineering Journey */}
+        {/* Phase 04: Engineering Journey & Evolution */}
         <JourneySection />
 
         {/* Phase 05: GitHub Audited Repositories */}

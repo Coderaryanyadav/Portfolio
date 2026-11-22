@@ -92,7 +92,12 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10">{item.label}</span>
+                  <span className="relative z-10 hover-link">
+                    <span className="hover-in">
+                      <span>{item.label}</span>
+                      <span aria-hidden="true">{item.label}</span>
+                    </span>
+                  </span>
                 </a>
               );
             })}
