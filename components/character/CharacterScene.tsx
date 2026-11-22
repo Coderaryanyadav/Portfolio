@@ -70,6 +70,11 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     pointLight.castShadow = true;
     scene.add(pointLight);
 
+    // Floor ambient light under workstation desk (matching Moncy Image 3 glowing floor circle)
+    const floorGlowLight = new THREE.PointLight(0x00d2ff, 0, 20, 2);
+    floorGlowLight.position.set(0, 2, 2);
+    scene.add(floorGlowLight);
+
     // Load Environment HDR
     try {
       new RGBELoader().setPath("/models/").load(
@@ -401,12 +406,12 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             .to(".landing-container", { opacity: 0, duration: 0.4 }, 0)
             .to(".landing-container", { y: "40%", duration: 0.8 }, 0);
 
-          // TL2: About Section -> Transition into "What I Do" (Reveal Workstation!)
+          // TL2: Seamless transition into "What I Do" (Workstation only reveals when entering What I Do)
           const tl2 = gsap.timeline({
             scrollTrigger: {
-              trigger: ".about-section",
-              start: "center 55%",
-              end: "bottom top",
+              trigger: ".whatIDO",
+              start: "top 95%",
+              end: "top 20%",
               scrub: 0.6,
               invalidateOnRefresh: true,
               onEnter: () => setWorkstationVisibility(true),
@@ -416,32 +421,34 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
                 if (screenLight && initialScreenLightPos) screenLight.position.copy(initialScreenLightPos);
                 if (monitorMesh) monitorMesh.material.opacity = 0;
                 if (screenLight?.material) screenLight.material.opacity = 0;
+                if (floorGlowLight) floorGlowLight.intensity = 0;
               },
             },
           });
 
           tl2
-            .to(camera.position, { z: 75, y: 8.4, duration: 6, delay: 1, ease: "power3.inOut" }, 0)
-            .to(".about-section", { y: "30%", duration: 6 }, 0)
-            .to(".about-section", { opacity: 0, delay: 3, duration: 2 }, 0)
+            .to(camera.position, { z: 75, y: 8.4, duration: 6, delay: 0.2, ease: "power3.inOut" }, 0)
             .fromTo(
               ".character-model",
-              { pointerEvents: "inherit" },
-              { pointerEvents: "none", x: "-12%", delay: 1, duration: 5 },
+              { pointerEvents: "inherit", x: "-25%" },
+              { pointerEvents: "none", x: "-12%", delay: 0.2, duration: 5 },
               0
             )
-            .to(char.rotation, { y: 0.92, x: 0.12, delay: 2, duration: 3 }, 0);
+            .to(char.rotation, { y: 0.92, x: 0.12, delay: 1, duration: 3 }, 0);
 
           if (neckBone) {
-            tl2.to(neckBone.rotation, { x: 0.6, delay: 2, duration: 3 }, 0);
+            tl2.to(neckBone.rotation, { x: 0.6, delay: 1, duration: 3 }, 0);
           }
+
+          // Subtle ambient glow under desk (Image 3)
+          tl2.to(floorGlowLight, { intensity: 2.2, duration: 2, delay: 1.5 }, 0);
 
           // Monitor & screen light rise smoothly into natural tabletop position and turn on
           if (monitorObject && initialMonitorPos) {
             tl2.fromTo(
               monitorObject.position,
               { x: initialMonitorPos.x, y: initialMonitorPos.y - 3, z: initialMonitorPos.z },
-              { x: initialMonitorPos.x, y: initialMonitorPos.y, z: initialMonitorPos.z, delay: 1.5, duration: 3 },
+              { x: initialMonitorPos.x, y: initialMonitorPos.y, z: initialMonitorPos.z, delay: 1.2, duration: 3 },
               0
             );
           }
@@ -450,22 +457,22 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             tl2.fromTo(
               screenLight.position,
               { x: initialScreenLightPos.x, y: initialScreenLightPos.y - 3, z: initialScreenLightPos.z },
-              { x: initialScreenLightPos.x, y: initialScreenLightPos.y, z: initialScreenLightPos.z, delay: 1.5, duration: 3 },
+              { x: initialScreenLightPos.x, y: initialScreenLightPos.y, z: initialScreenLightPos.z, delay: 1.2, duration: 3 },
               0
             );
           }
 
           if (monitorMesh) {
-            tl2.to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
+            tl2.to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 2.5 }, 0);
           }
           if (screenLight && screenLight.material) {
-            tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 3.8 }, 0);
+            tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 3.0 }, 0);
           }
 
           tl2.fromTo(
             ".character-rim",
             { opacity: 0.9, scale: 1.3 },
-            { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 1 },
+            { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 0.2 },
             0
           );
 
