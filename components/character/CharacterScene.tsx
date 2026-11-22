@@ -99,6 +99,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     let screenLight: any = null;
     let monitorMesh: any = null;
     let monitorObject: any = null;
+    let initialMonitorPos: THREE.Vector3 | null = null;
+    let initialScreenLightPos: THREE.Vector3 | null = null;
     let eyeBrowUpAction: THREE.AnimationAction | null = null;
     let characterMesh: THREE.Object3D | null = null;
     let isHovering = false;
@@ -254,8 +256,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           // Monitor & Screenlight specifics
           if (nodeName === "Plane.004" || nodeName === "Plane004") {
             monitorObject = child;
+            initialMonitorPos = child.position.clone();
             child.visible = false;
-            child.position.set(0, -10, 2);
             child.traverse((sub: any) => {
               if (sub.isMesh && sub.material) {
                 if (sub.material.name === "Material.027") {
@@ -274,8 +276,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
           if (nodeName === "screenlight") {
             screenLight = child;
+            initialScreenLightPos = child.position.clone();
             child.visible = false;
-            child.position.set(0, -10, 2);
             if (child.material) {
               child.material.transparent = true;
               child.material.opacity = 0;
@@ -410,8 +412,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               onEnter: () => setWorkstationVisibility(true),
               onLeaveBack: () => {
                 setWorkstationVisibility(false);
-                if (monitorObject) monitorObject.position.set(0, -10, 2);
-                if (screenLight) screenLight.position.set(0, -10, 2);
+                if (monitorObject && initialMonitorPos) monitorObject.position.copy(initialMonitorPos);
+                if (screenLight && initialScreenLightPos) screenLight.position.copy(initialScreenLightPos);
                 if (monitorMesh) monitorMesh.material.opacity = 0;
                 if (screenLight?.material) screenLight.material.opacity = 0;
               },
@@ -434,16 +436,23 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             tl2.to(neckBone.rotation, { x: 0.6, delay: 2, duration: 3 }, 0);
           }
 
-          // Monitor & screen light rise smoothly together and turn on
-          if (monitorObject && screenLight) {
+          // Monitor & screen light rise smoothly into natural tabletop position and turn on
+          if (monitorObject && initialMonitorPos) {
             tl2.fromTo(
-              [monitorObject.position, screenLight.position],
-              { y: -10, z: 2 },
-              { y: 0, z: 0, delay: 1.5, duration: 3 },
+              monitorObject.position,
+              { x: initialMonitorPos.x, y: initialMonitorPos.y - 3, z: initialMonitorPos.z },
+              { x: initialMonitorPos.x, y: initialMonitorPos.y, z: initialMonitorPos.z, delay: 1.5, duration: 3 },
               0
             );
-          } else if (monitorObject) {
-            tl2.fromTo(monitorObject.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0);
+          }
+
+          if (screenLight && initialScreenLightPos) {
+            tl2.fromTo(
+              screenLight.position,
+              { x: initialScreenLightPos.x, y: initialScreenLightPos.y - 3, z: initialScreenLightPos.z },
+              { x: initialScreenLightPos.x, y: initialScreenLightPos.y, z: initialScreenLightPos.z, delay: 1.5, duration: 3 },
+              0
+            );
           }
 
           if (monitorMesh) {
