@@ -65,7 +65,10 @@ export default function Home() {
         {/* Signature Moncy Workstation Typing & What I Do (matching Image 3) */}
         <WhatIDoSection />
 
-        {/* Continuous Ticker Ribbon #1 */}
+        {/* Phase 02: Featured Projects & Case Studies */}
+        <ProjectsSection onOpenProject={(p) => setActiveCaseStudyProject(p)} />
+
+        {/* Continuous Ticker Ribbon #1 - Clean placement between Projects and Skills */}
         <ContinuousMarquee
           items={[
             "Offline AI & RAG",
@@ -79,10 +82,10 @@ export default function Home() {
           speedSeconds={32}
         />
 
-        {/* Phase 02: Featured Projects & Case Studies */}
-        <ProjectsSection onOpenProject={(p) => setActiveCaseStudyProject(p)} />
+        {/* Phase 03: Technical Ecosystem */}
+        <SkillsSection />
 
-        {/* Continuous Ticker Ribbon #2 */}
+        {/* Continuous Ticker Ribbon #2 - Between Skills and Journey */}
         <ContinuousMarquee
           items={[
             "FinAuditPro Desktop",
@@ -95,9 +98,6 @@ export default function Home() {
           direction="right"
           speedSeconds={28}
         />
-
-        {/* Phase 03: Technical Ecosystem */}
-        <SkillsSection />
 
         {/* Phase 04: Engineering Journey */}
         <JourneySection />

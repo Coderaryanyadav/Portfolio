@@ -61,6 +61,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     const directionalLight = new THREE.DirectionalLight(0xc2a4ff, 0);
     directionalLight.position.set(-0.47, -0.32, -1);
     directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
     scene.add(directionalLight);
 
     const pointLight = new THREE.PointLight(0x00d2ff, 0, 100, 3);
@@ -102,71 +104,191 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     let isHovering = false;
     let scrollTriggers: ScrollTrigger[] = [];
 
-    // Array of workstation objects that MUST BE HIDDEN in the Hero Section
+    // Array of workstation objects that MUST BE HIDDEN in Hero & About sections
     const workstationMeshes: THREE.Object3D[] = [];
-    const workstationNodeNames = [
-      "Plane",
-      "Plane.002",
-      "Plane.003",
-      "Plane.004",
-      "screenlight",
-      "Keyboard",
-      "Cube.002",
-      "ground",
-    ];
 
     loader.load(
       "/models/character.glb",
       async (gltf) => {
         const char = gltf.scene;
         characterMesh = char;
-        await renderer.compileAsync(char, camera, scene);
 
+        // Custom Material Assignments to match Moncy.dev Image 2 & Image 3
         char.traverse((child: any) => {
           if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
             child.frustumCulled = true;
+
+            const name = child.name || "";
+
+            // Head / Face (Plane.007 / Plane007 has morph targets)
+            if (name.includes("Plane.007") || name.includes("Plane007")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xc68a64); // Warm natural skin tone
+              mat.roughness = 0.65;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Ears
+            else if (name.includes("Ear")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xc68a64);
+              mat.roughness = 0.65;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Neck
+            else if (name.includes("Neck")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xc68a64);
+              mat.roughness = 0.65;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Hands
+            else if (name.includes("Hand")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xc68a64);
+              mat.roughness = 0.65;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Shirt / Sweatshirt (BODY.SHIRT) -> Deep charcoal black crewneck
+            else if (name.includes("BODY.SHIRT") || name.includes("BODYSHIRT") || name.includes("SHIRT")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0x18191e);
+              mat.roughness = 0.85;
+              mat.metalness = 0.1;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Pants -> Dark charcoal trousers
+            else if (name.includes("Pant")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0x222328);
+              mat.roughness = 0.8;
+              mat.metalness = 0.1;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Shoes -> Crisp white sneakers
+            else if (name.includes("Shoe")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xf2f2f5);
+              mat.roughness = 0.35;
+              mat.metalness = 0.0;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Soles
+            else if (name.includes("Sole")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xdcdde2);
+              mat.roughness = 0.5;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Chair shell (Cube.002) -> White ergonomic chair
+            else if (name.includes("Cube.002") || name.includes("Cube002")) {
+              const mat = child.material.clone();
+              mat.color.setHex(0xf5f5f7);
+              mat.roughness = 0.35;
+              mat.needsUpdate = true;
+              child.material = mat;
+            }
+            // Hair -> Jet black hair with natural sheen
+            else if (name.includes("hair")) {
+              if (child.material) {
+                child.material.color.setHex(0x0a0b0d);
+                child.material.roughness = 0.45;
+                child.material.needsUpdate = true;
+              }
+            }
+            // Desk tabletop (Plane.002) -> Crisp clean white tabletop
+            else if (name.includes("Plane.002") || name.includes("Plane002")) {
+              if (child.material) {
+                child.material.color.setHex(0xffffff);
+                child.material.roughness = 0.2;
+                child.material.needsUpdate = true;
+              }
+            }
+            // Desk legs (Plane) -> Matte dark metal
+            else if (name === "Plane" || name.includes("Plane009")) {
+              if (child.material) {
+                child.material.color.setHex(0x121316);
+                child.material.roughness = 0.6;
+                child.material.metalness = 0.8;
+                child.material.needsUpdate = true;
+              }
+            }
           }
 
-          // Check if this object belongs to the workstation (desk, chair, keyboard, monitor, floor)
-          const isWorkstationPart =
-            workstationNodeNames.some(
-              (name) => child.name === name || child.name.replace(".", "") === name.replace(".", "")
-            ) || child.name.startsWith("KEYS");
+          // Identify and isolate workstation meshes (desk, chair, keyboard, monitor, screenlight, floor)
+          const nodeName = child.name || "";
+          const isWorkstation =
+            nodeName.includes("Plane.004") ||
+            nodeName.includes("Plane004") ||
+            nodeName.includes("screenlight") ||
+            nodeName.includes("Keyboard") ||
+            nodeName.includes("Plane.002") ||
+            nodeName.includes("Plane002") ||
+            nodeName === "Plane" ||
+            nodeName.includes("ground") ||
+            nodeName.includes("Cube.002") ||
+            nodeName.includes("Cube002") ||
+            nodeName.includes("Plane.003") ||
+            nodeName.includes("Plane003") ||
+            nodeName.startsWith("KEYS");
 
-          if (isWorkstationPart) {
+          if (isWorkstation) {
             workstationMeshes.push(child);
-            // HIDE IN HERO SECTION! Zero white desk tabletop floating at character chest!
+            // STRICTLY HIDDEN IN HERO & ABOUT SECTIONS
             child.visible = false;
           }
 
           // Monitor & Screenlight specifics
-          if (child.name === "Plane.004" || child.name === "Plane004") {
+          if (nodeName === "Plane.004" || nodeName === "Plane004") {
             monitorObject = child;
+            child.visible = false;
             child.position.set(0, -10, 2);
             child.traverse((sub: any) => {
-              if (sub.material && sub.material.name === "Material.027") {
-                monitorMesh = sub;
-                sub.material.transparent = true;
-                sub.material.opacity = 0;
-                sub.material.color.set("#00D2FF");
+              if (sub.isMesh && sub.material) {
+                if (sub.material.name === "Material.027") {
+                  monitorMesh = sub;
+                  sub.material.transparent = true;
+                  sub.material.opacity = 0;
+                  sub.material.color.setHex(0x00d2ff);
+                  sub.material.needsUpdate = true;
+                } else if (sub.material.name === "Material.028") {
+                  sub.material.color.setHex(0x22232a);
+                  sub.material.needsUpdate = true;
+                }
               }
             });
           }
 
-          if (child.name === "screenlight") {
+          if (nodeName === "screenlight") {
             screenLight = child;
+            child.visible = false;
+            child.position.set(0, -10, 2);
             if (child.material) {
               child.material.transparent = true;
               child.material.opacity = 0;
-              child.material.emissive.set("#00D2FF");
-              child.material.emissiveIntensity = 4;
+              child.material.emissive.setHex(0x00d2ff);
+              child.material.emissiveIntensity = 5;
+              child.material.needsUpdate = true;
             }
           }
         });
 
-        // Bone offsets for proper chair alignment
+        await renderer.compileAsync(char, camera, scene);
+
+        // Bone offsets for chair seating alignment
         const footR = char.getObjectByName("footR");
         const footL = char.getObjectByName("footL");
         if (footR) footR.position.y = 3.36;
@@ -251,11 +373,12 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         // Register GSAP ScrollTrigger Choreography (Desktop only)
         if (isDesktopView) {
-          // Helper to toggle workstation visibility
-          const setWorkstationVisible = (visible: boolean) => {
+          const setWorkstationVisibility = (visible: boolean) => {
             workstationMeshes.forEach((mesh) => {
               mesh.visible = visible;
             });
+            if (monitorObject) monitorObject.visible = visible;
+            if (screenLight) screenLight.visible = visible;
           };
 
           // TL1: Hero Section Scroll -> Character turns slightly, camera zooms out, hero typography fades
@@ -266,7 +389,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               end: "bottom top",
               scrub: 1,
               invalidateOnRefresh: true,
-              onLeaveBack: () => setWorkstationVisible(false),
+              onLeaveBack: () => setWorkstationVisibility(false),
             },
           });
           tl1
@@ -284,8 +407,14 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               end: "bottom top",
               scrub: 1,
               invalidateOnRefresh: true,
-              onEnter: () => setWorkstationVisible(true),
-              onLeaveBack: () => setWorkstationVisible(false),
+              onEnter: () => setWorkstationVisibility(true),
+              onLeaveBack: () => {
+                setWorkstationVisibility(false);
+                if (monitorObject) monitorObject.position.set(0, -10, 2);
+                if (screenLight) screenLight.position.set(0, -10, 2);
+                if (monitorMesh) monitorMesh.material.opacity = 0;
+                if (screenLight?.material) screenLight.material.opacity = 0;
+              },
             },
           });
 
@@ -305,10 +434,18 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             tl2.to(neckBone.rotation, { x: 0.6, delay: 2, duration: 3 }, 0);
           }
 
-          // Monitor & screen light rise and turn on
-          if (monitorObject) {
+          // Monitor & screen light rise smoothly together and turn on
+          if (monitorObject && screenLight) {
+            tl2.fromTo(
+              [monitorObject.position, screenLight.position],
+              { y: -10, z: 2 },
+              { y: 0, z: 0, delay: 1.5, duration: 3 },
+              0
+            );
+          } else if (monitorObject) {
             tl2.fromTo(monitorObject.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0);
           }
+
           if (monitorMesh) {
             tl2.to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0);
           }
@@ -433,8 +570,10 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       }
 
       // Point light sync with monitor screen
-      if (screenLight && screenLight.material && screenLight.material.opacity > 0.5) {
-        pointLight.intensity = (screenLight.material.emissiveIntensity || 4) * 2.5;
+      if (screenLight && screenLight.visible && screenLight.material && screenLight.material.opacity > 0.5) {
+        pointLight.intensity = (screenLight.material.emissiveIntensity || 5) * 3.0;
+      } else {
+        pointLight.intensity = 0;
       }
 
       const delta = clock.getDelta();
