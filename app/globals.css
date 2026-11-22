@@ -391,15 +391,15 @@ body {
   transition: 0.4s;
 }
 
-/* Continuous Marquee Keyframes */
+/* Continuous Marquee Keyframes (GPU Hardware Composited) */
 @keyframes marquee-scroll-left {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translate3d(0%, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
 }
 
 @keyframes marquee-scroll-right {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(0%); }
+  0% { transform: translate3d(-100%, 0, 0); }
+  100% { transform: translate3d(0%, 0, 0); }
 }
 
 /* =========================================================================
@@ -671,6 +671,8 @@ body {
   height: 100%;
   position: relative;
   pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .character-canvas-wrapper {

@@ -389,7 +389,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               trigger: ".landing-section",
               start: "top top",
               end: "bottom top",
-              scrub: 1,
+              scrub: 0.6,
               invalidateOnRefresh: true,
               onLeaveBack: () => setWorkstationVisibility(false),
             },
@@ -407,7 +407,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               trigger: ".about-section",
               start: "center 55%",
               end: "bottom top",
-              scrub: 1,
+              scrub: 0.6,
               invalidateOnRefresh: true,
               onEnter: () => setWorkstationVisibility(true),
               onLeaveBack: () => {
@@ -475,7 +475,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               trigger: ".whatIDO",
               start: "top top",
               end: "bottom top",
-              scrub: 1,
+              scrub: 0.6,
               invalidateOnRefresh: true,
             },
           });
@@ -562,20 +562,25 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Rotate head smoothly towards mouse when in hero section
-      if (headBone && window.scrollY < 300) {
-        const maxRotY = Math.PI / 6;
-        const maxRotX = 0.35;
-        const minRotX = -0.25;
+      // Rotate head smoothly towards mouse when in hero section, return to focused typing when scrolled
+      if (headBone) {
+        if (window.scrollY < 300) {
+          const maxRotY = Math.PI / 6;
+          const maxRotX = 0.35;
+          const minRotX = -0.25;
 
-        targetRotation.y = mouse.x * maxRotY;
-        let clampedY = mouse.y;
-        if (clampedY < minRotX) clampedY = minRotX;
-        if (clampedY > maxRotX) clampedY = maxRotX;
-        targetRotation.x = -clampedY - 0.3 * maxRotY;
+          targetRotation.y = mouse.x * maxRotY;
+          let clampedY = mouse.y;
+          if (clampedY < minRotX) clampedY = minRotX;
+          if (clampedY > maxRotX) clampedY = maxRotX;
+          targetRotation.x = -clampedY - 0.3 * maxRotY;
 
-        headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, targetRotation.y, 0.08);
-        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, targetRotation.x, 0.06);
+          headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, targetRotation.y, 0.08);
+          headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, targetRotation.x, 0.06);
+        } else {
+          headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -0.4, 0.04);
+          headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, -0.3, 0.04);
+        }
       }
 
       // Point light sync with monitor screen

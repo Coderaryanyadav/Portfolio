@@ -31,9 +31,9 @@ export default function SocialIcons({ onOpenResume }: SocialIconsProps) {
       let animId: number;
 
       const updatePos = () => {
-        currentX += (mouseX - currentX) * 0.12;
-        currentY += (mouseY - currentY) * 0.12;
-        link.style.transform = `translate(${currentX - rect.width / 2}px, ${currentY - rect.height / 2}px)`;
+        currentX += (mouseX - currentX) * 0.14;
+        currentY += (mouseY - currentY) * 0.14;
+        link.style.transform = `translate3d(${currentX - rect.width / 2}px, ${currentY - rect.height / 2}px, 0)`;
         animId = requestAnimationFrame(updatePos);
       };
 
