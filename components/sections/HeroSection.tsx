@@ -61,28 +61,59 @@ export default function HeroSection() {
           </h1>
         </div>
 
-        {/* Dynamic Rotating Engineering Pillars */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#090b14]/90 border border-cyan-500/25 w-full shadow-[0_0_30px_rgba(0,210,255,0.06)] min-h-[135px] flex flex-col justify-center overflow-hidden relative">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={titleIdx}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-1 w-full"
-            >
-              <span className="text-cyan-400 font-mono text-xs uppercase tracking-wider block">
-                {ROTATING_TITLES[titleIdx].prefix}
-              </span>
-              <div className="text-xl sm:text-2xl font-heading font-extrabold text-[#c481ff]">
-                {ROTATING_TITLES[titleIdx].top}
-              </div>
-              <div className="text-xl sm:text-2xl font-heading font-extrabold text-white">
-                {ROTATING_TITLES[titleIdx].bottom}
-              </div>
-            </motion.div>
-          </AnimatePresence>
+        {/* Dynamic Rotating Engineering Pillars - Fluid Masked Reel */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#090b14]/90 border border-cyan-500/25 w-full shadow-[0_0_30px_rgba(0,210,255,0.06)] flex flex-col justify-center relative">
+          <div className="flex flex-col items-center justify-center space-y-1.5">
+            {/* Category Slot */}
+            <div className="h-5 overflow-hidden relative w-full flex justify-center">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={titleIdx}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+                  className="h-5 flex items-center justify-center"
+                >
+                  <span className="text-cyan-400 font-mono text-xs uppercase tracking-wider block">
+                    {ROTATING_TITLES[titleIdx].prefix}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Top Headline Slot */}
+            <div className="h-8 sm:h-9 overflow-hidden relative w-full flex justify-center">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={titleIdx}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.56, delay: 0.03, ease: [0.16, 1, 0.3, 1] }}
+                  className="h-8 sm:h-9 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-[#c481ff] whitespace-nowrap"
+                >
+                  {ROTATING_TITLES[titleIdx].top}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Bottom Headline Slot */}
+            <div className="h-8 sm:h-9 overflow-hidden relative w-full flex justify-center">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={titleIdx}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.58, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  className="h-8 sm:h-9 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-white whitespace-nowrap"
+                >
+                  {ROTATING_TITLES[titleIdx].bottom}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
 
         <p className="text-zinc-300 font-sans text-sm sm:text-base leading-relaxed max-w-md">
@@ -175,46 +206,73 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right Column: High-Conviction Engineering Pillars with Organic Floating Drift */}
-        <motion.div
-          animate={{ y: ["-50%", "calc(-50% - 6px)", "-50%"] }}
-          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-          className="landing-info pointer-events-auto"
-        >
-          <div className="min-h-[145px] flex flex-col justify-center relative overflow-hidden">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
-                key={titleIdx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                className="space-y-1 w-full"
-              >
-                <h3 className="text-cyan-400 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>{ROTATING_TITLES[titleIdx].prefix}</span>
-                </h3>
-                <h2 className="landing-info-h2">
-                  {ROTATING_TITLES[titleIdx].top}
-                </h2>
-                <h2 className="landing-h2-info">
-                  {ROTATING_TITLES[titleIdx].bottom}
-                </h2>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+        {/* Right Column: High-Conviction Engineering Pillars with GPU-Accelerated Floating Drift & Masked Odometer Reels */}
+        <div className="landing-info pointer-events-auto">
+          <div className="hero-floating-card">
+            <div className="flex flex-col justify-center space-y-1">
+              {/* Category Slot */}
+              <div className="h-6 overflow-hidden relative">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={titleIdx}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    exit={{ y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+                    className="h-6 flex items-center gap-2"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                    <span className="text-cyan-400 font-mono text-xs uppercase tracking-widest">
+                      {ROTATING_TITLES[titleIdx].prefix}
+                    </span>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-          <div className="pt-3 hidden sm:flex items-center gap-2 text-[11px] font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            <span>14 Audited Repositories • 0KB Cloud Egress</span>
-          </div>
+              {/* Main Headline Top Line */}
+              <div className="h-[52px] overflow-hidden relative">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.h2
+                    key={titleIdx}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    exit={{ y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.56, delay: 0.03, ease: [0.16, 1, 0.3, 1] }}
+                    className="landing-info-h2 whitespace-nowrap h-[52px] flex items-center"
+                  >
+                    {ROTATING_TITLES[titleIdx].top}
+                  </motion.h2>
+                </AnimatePresence>
+              </div>
 
-          <div className="pt-1 text-[11px] font-mono text-zinc-400 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Sub-50ms Spatial GIS • Production Flutter &amp; Next.js 15</span>
+              {/* Main Headline Bottom Line */}
+              <div className="h-[52px] overflow-hidden relative">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.h2
+                    key={titleIdx}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: "0%", opacity: 1 }}
+                    exit={{ y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.58, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+                    className="landing-h2-info whitespace-nowrap h-[52px] flex items-center"
+                  >
+                    {ROTATING_TITLES[titleIdx].bottom}
+                  </motion.h2>
+                </AnimatePresence>
+              </div>
+            </div>
+
+            <div className="pt-3 hidden sm:flex items-center gap-2 text-[11px] font-mono text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              <span>14 Audited Repositories • 0KB Cloud Egress</span>
+            </div>
+
+            <div className="pt-1 text-[11px] font-mono text-zinc-400 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Sub-50ms Spatial GIS • Production Flutter &amp; Next.js 15</span>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Bottom telemetry footer with safe side padding to avoid floating icon collision */}

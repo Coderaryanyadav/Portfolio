@@ -602,24 +602,40 @@ body {
 .landing-info-h2 {
   color: #c481ff;
   font-size: 46px;
-  line-height: 44px;
-  margin: 6px 0 0 0;
+  line-height: 48px;
+  margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  text-shadow: 0 0 35px rgba(196, 129, 255, 0.45);
+  text-shadow: 0 0 18px rgba(196, 129, 255, 0.35);
+  -webkit-font-smoothing: antialiased;
 }
 
 .landing-h2-info {
   color: #ffffff;
   font-size: 46px;
-  line-height: 44px;
-  margin: 4px 0 0 0;
+  line-height: 48px;
+  margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes heroFloatingDrift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+.hero-floating-card {
+  animation: heroFloatingDrift 5s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Mobile & Tablet Overrides (<= 1024px) */
