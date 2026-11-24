@@ -53,7 +53,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     container.appendChild(renderer.domElement);
 
     // Initial Camera Setup - adaptive distance based on screen width for clean text clearance
-    const initialZ = isDesktopView ? (width < 1280 ? 30.5 : 26.5) : 29.0;
+    const initialZ = isDesktopView ? (width < 1280 ? 35.0 : 26.5) : 29.0;
     const camera = new THREE.PerspectiveCamera(
       isDesktopView ? 13.5 : 16.0,
       aspect,
@@ -673,6 +673,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
       camera.aspect = aspect;
       camera.fov = desktop ? 13.5 : 16.0;
+      if (desktop) {
+        camera.position.z = width < 1280 ? 35.0 : 26.5;
+      }
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       ScrollTrigger.refresh();
