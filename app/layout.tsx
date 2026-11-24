@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://github.com/Coderaryanyadav",
+    url: "https://aryan-yadav-portfolio.vercel.app",
     title: "Aryan Yadav — Software Engineer & Builder",
     description:
       "Engineering ideas into real-world experiences. Full-stack development, offline-first AI, cybersecurity, and systems architecture.",

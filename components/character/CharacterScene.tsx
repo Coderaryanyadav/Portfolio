@@ -296,7 +296,11 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
           }
         });
 
-        await renderer.compileAsync(char, camera, scene);
+        try {
+          await renderer.compileAsync(char, camera, scene);
+        } catch (compileErr) {
+          console.warn("Shader pre-compilation skipped, proceeding with scene mount:", compileErr);
+        }
 
         // Bone offsets for chair seating alignment
         const footR = char.getObjectByName("footR");

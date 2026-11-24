@@ -638,8 +638,8 @@ body {
   will-change: transform;
 }
 
-/* Mobile & Tablet Overrides (<= 1024px) */
-@media screen and (max-width: 1024px) {
+/* Mobile & Tablet Overrides (< 1024px) */
+@media screen and (max-width: 1023px) {
   .landing-section {
     height: auto !important;
     min-height: 100vh;
@@ -992,7 +992,7 @@ body {
 }
 
 /* Responsiveness for What I Do */
-@media only screen and (max-width: 1024px) {
+@media only screen and (max-width: 1023px) {
   .whatIDO {
     height: auto;
     min-height: auto;
