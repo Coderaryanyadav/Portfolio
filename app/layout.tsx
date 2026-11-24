@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Aryan Yadav — Software Engineer & Builder",
   description:
-    "Personal portfolio of Aryan Yadav — Engineering student, full-stack developer, cybersecurity explorer, and AI builder. Crafting offline-first systems, mobile architectures, and practical software.",
+    "Personal portfolio of Aryan Yadav — Information Technology student, full-stack developer, cybersecurity explorer, and AI builder. Crafting offline-first systems, mobile architectures, and practical software.",
   keywords: [
     "Aryan Yadav",
     "Coderaryanyadav",
@@ -52,14 +52,58 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://aryan-yadav-portfolio.vercel.app/#person",
+      name: "Aryan Yadav",
+      alternateName: "Coderaryanyadav",
+      url: "https://aryan-yadav-portfolio.vercel.app",
+      sameAs: [
+        "https://github.com/Coderaryanyadav",
+        "https://linkedin.com/in/aryanjyadav",
+      ],
+      jobTitle: "Software Engineer",
+      knowsAbout: [
+        "Full-Stack Web Development",
+        "Offline-First Artificial Intelligence",
+        "Defensive Cybersecurity",
+        "Flutter & React Native",
+        "PostGIS & Spatial Logistics",
+        "Next.js & TypeScript",
+      ],
+      description:
+        "Software engineer and builder specializing in offline AI, statutory compliance engines, and high-stakes resilient architectures.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://aryan-yadav-portfolio.vercel.app/#website",
+      url: "https://aryan-yadav-portfolio.vercel.app",
+      name: "Aryan Yadav — Portfolio",
+      publisher: {
+        "@id": "https://aryan-yadav-portfolio.vercel.app/#person",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
+        suppressHydrationWarning
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans bg-background text-zinc-100 min-h-screen selection:bg-cyan-400 selection:text-black antialiased`}
       >
         <div className="fixed inset-0 pointer-events-none noise-overlay z-50 opacity-40" />

@@ -1,21 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, GitCommit, CheckCircle2, ChevronRight } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { JOURNEY } from "@/data/journey";
 
 export default function JourneySection() {
   return (
-    <section id="journey" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative">
+    <section id="journey" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative z-20 bg-[#06070d]">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Section Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <span>04 — Chronology</span>
+            <span>05 — Engineering Chronology</span>
           </div>
           <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white">
-            "Still learning. Always building."
+            &ldquo;Still learning. Always building.&rdquo;
           </h2>
           <p className="text-base text-zinc-400 font-sans max-w-xl">
             A chronological timeline of engineering progression: from computer science fundamentals to offline AI and mission-critical logistics.

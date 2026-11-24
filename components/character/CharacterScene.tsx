@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
@@ -15,17 +15,21 @@ interface CharacterSceneProps {
 }
 
 export default function CharacterScene({ onLoaded, className = "" }: CharacterSceneProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const hoverRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
-    setIsDesktop(window.innerWidth > 1024);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      onLoaded?.();
+      return;
+    }
+
     gsap.registerPlugin(ScrollTrigger);
 
     if (!mountRef.current) return;
     const container = mountRef.current;
-    const isDesktopView = window.innerWidth > 1024;
+    const isDesktopView = true;
 
     let width = isDesktopView ? window.innerWidth : container.clientWidth || window.innerWidth;
     let height = isDesktopView ? window.innerHeight : container.clientHeight || 450;
@@ -33,7 +37,14 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
     // Three.js Scene Setup
     const scene = new THREE.Scene();
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+    } catch (e) {
+      console.warn("WebGL initialization failed:", e);
+      return;
+    }
+
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -41,38 +52,48 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Initial Camera Setup - exact front-facing bust view from moncy.dev
+    // Initial Camera Setup - perfectly framed bust view with ample breathing space
     const camera = new THREE.PerspectiveCamera(
-      isDesktopView ? 14.5 : 16.5,
+      isDesktopView ? 13.5 : 16.0,
       aspect,
       0.1,
       1000
     );
     if (isDesktopView) {
-      camera.position.set(0, 13.1, 24.7);
-      camera.zoom = 1.1;
-    } else {
-      camera.position.set(0, 13.0, 27.5);
+      camera.position.set(0, 13.0, 26.5);
       camera.zoom = 1.0;
+    } else {
+      camera.position.set(0, 13.8, 29.0);
+      camera.zoom = 0.95;
     }
     camera.updateProjectionMatrix();
 
-    // Lighting (Cyber Blue & Lavender palette matching Image 2 & Image 3)
-    const directionalLight = new THREE.DirectionalLight(0xc2a4ff, 0);
-    directionalLight.position.set(-0.47, -0.32, -1);
+    // Studio Lighting: Clean, balanced illumination with zero specular blown-out glare
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    // Front-Right Key Light: Soft warm studio light sculpting the face and hands
+    const directionalLight = new THREE.DirectionalLight(0xfff8f0, 0.85);
+    directionalLight.position.set(3, 10, 8);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 1024;
     directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.bias = -0.0005;
     scene.add(directionalLight);
 
-    const pointLight = new THREE.PointLight(0x00d2ff, 0, 100, 3);
-    pointLight.position.set(3, 12, 4);
-    pointLight.castShadow = true;
+    // Subtle Cyan Rim Light: Edge separation matching the cyan portfolio accents (No harsh magenta!)
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
+    rimLight.position.set(-4, 7, -5);
+    scene.add(rimLight);
+
+    // Screen Glow Point Light: Soft cyber blue illumination from the monitor onto face & hands
+    const pointLight = new THREE.PointLight(0x00d2ff, 0.8, 15, 2);
+    pointLight.position.set(0, 9, 3);
     scene.add(pointLight);
 
-    // Floor ambient light under workstation desk (matching Moncy Image 3 glowing floor circle)
-    const floorGlowLight = new THREE.PointLight(0x00d2ff, 0, 20, 2);
-    floorGlowLight.position.set(0, 2, 2);
+    // Floor ambient light under workstation desk
+    const floorGlowLight = new THREE.PointLight(0x00d2ff, 1.2, 16, 2);
+    floorGlowLight.position.set(0, 1, 1);
     scene.add(floorGlowLight);
 
     // Load Environment HDR
@@ -82,7 +103,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
         (texture) => {
           texture.mapping = THREE.EquirectangularReflectionMapping;
           scene.environment = texture;
-          scene.environmentIntensity = 0;
+          scene.environmentIntensity = 0.45;
           scene.environmentRotation.set(5.76, 85.85, 1);
         },
         undefined,
@@ -101,194 +122,176 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     let mixer: THREE.AnimationMixer | null = null;
     let headBone: THREE.Object3D | null = null;
     let neckBone: THREE.Object3D | null = null;
-    let screenLight: any = null;
-    let monitorMesh: any = null;
-    let monitorObject: any = null;
+    let screenLight: THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null = null;
+    let monitorObject: THREE.Object3D | null = null;
     let initialMonitorPos: THREE.Vector3 | null = null;
     let initialScreenLightPos: THREE.Vector3 | null = null;
     let eyeBrowUpAction: THREE.AnimationAction | null = null;
-    let characterMesh: THREE.Object3D | null = null;
     let isHovering = false;
-    let scrollTriggers: ScrollTrigger[] = [];
-
-    // Array of workstation objects that MUST BE HIDDEN in Hero & About sections
-    const workstationMeshes: THREE.Object3D[] = [];
+    const scrollTriggers: ScrollTrigger[] = [];
 
     loader.load(
       "/models/character.glb",
       async (gltf) => {
         const char = gltf.scene;
-        characterMesh = char;
 
         // Custom Material Assignments to match Moncy.dev Image 2 & Image 3
-        char.traverse((child: any) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            child.frustumCulled = true;
+        char.traverse((child: THREE.Object3D) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.frustumCulled = true;
 
-            const name = child.name || "";
+            const name = mesh.name || "";
 
             // Head / Face (Plane.007 / Plane007 has morph targets)
             if (name.includes("Plane.007") || name.includes("Plane007")) {
-              const mat = child.material.clone();
-              mat.color.setHex(0xc68a64); // Warm natural skin tone
-              mat.roughness = 0.65;
-              mat.metalness = 0.05;
+              const mat = mesh.material.clone();
+              mat.color.setHex(0xc8926e); // Warm healthy natural skin tone
+              mat.roughness = 0.68;
+              mat.metalness = 0.02;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Ears
             else if (name.includes("Ear")) {
-              const mat = child.material.clone();
-              mat.color.setHex(0xc68a64);
-              mat.roughness = 0.65;
-              mat.metalness = 0.05;
+              const mat = mesh.material.clone();
+              mat.color.setHex(0xc8926e);
+              mat.roughness = 0.68;
+              mat.metalness = 0.02;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Neck
             else if (name.includes("Neck")) {
-              const mat = child.material.clone();
-              mat.color.setHex(0xc68a64);
-              mat.roughness = 0.65;
-              mat.metalness = 0.05;
+              const mat = mesh.material.clone();
+              mat.color.setHex(0xc8926e);
+              mat.roughness = 0.68;
+              mat.metalness = 0.02;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Hands
             else if (name.includes("Hand")) {
-              const mat = child.material.clone();
-              mat.color.setHex(0xc68a64);
-              mat.roughness = 0.65;
-              mat.metalness = 0.05;
+              const mat = mesh.material.clone();
+              mat.color.setHex(0xc8926e);
+              mat.roughness = 0.68;
+              mat.metalness = 0.02;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Shirt / Sweatshirt (BODY.SHIRT) -> Deep charcoal black crewneck
             else if (name.includes("BODY.SHIRT") || name.includes("BODYSHIRT") || name.includes("SHIRT")) {
-              const mat = child.material.clone();
+              const mat = mesh.material.clone();
               mat.color.setHex(0x18191e);
               mat.roughness = 0.85;
               mat.metalness = 0.1;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Pants -> Dark charcoal trousers
             else if (name.includes("Pant")) {
-              const mat = child.material.clone();
+              const mat = mesh.material.clone();
               mat.color.setHex(0x222328);
               mat.roughness = 0.8;
               mat.metalness = 0.1;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Shoes -> Crisp white sneakers
             else if (name.includes("Shoe")) {
-              const mat = child.material.clone();
+              const mat = mesh.material.clone();
               mat.color.setHex(0xf2f2f5);
               mat.roughness = 0.35;
               mat.metalness = 0.0;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Soles
             else if (name.includes("Sole")) {
-              const mat = child.material.clone();
+              const mat = mesh.material.clone();
               mat.color.setHex(0xdcdde2);
               mat.roughness = 0.5;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
             // Chair shell (Cube.002) -> White ergonomic chair
             else if (name.includes("Cube.002") || name.includes("Cube002")) {
-              const mat = child.material.clone();
+              const mat = mesh.material.clone();
               mat.color.setHex(0xf5f5f7);
               mat.roughness = 0.35;
               mat.needsUpdate = true;
-              child.material = mat;
+              mesh.material = mat;
             }
-            // Hair -> Jet black hair with natural sheen
+            // Hair -> Jet black hair with soft natural matte (no specular magenta flare)
             else if (name.includes("hair")) {
-              if (child.material) {
-                child.material.color.setHex(0x0a0b0d);
-                child.material.roughness = 0.45;
-                child.material.needsUpdate = true;
+              if (mesh.material) {
+                mesh.material.color.setHex(0x14151a);
+                mesh.material.roughness = 0.90;
+                mesh.material.metalness = 0.0;
+                mesh.material.needsUpdate = true;
               }
             }
-            // Desk tabletop (Plane.002) -> Crisp clean white tabletop
+            // Desk tabletop (Plane.002) -> Crisp clean soft matte tabletop
             else if (name.includes("Plane.002") || name.includes("Plane002")) {
-              if (child.material) {
-                child.material.color.setHex(0xffffff);
-                child.material.roughness = 0.2;
-                child.material.needsUpdate = true;
+              if (mesh.material) {
+                mesh.material.color.setHex(0xf4f5f8);
+                mesh.material.roughness = 0.55;
+                mesh.material.metalness = 0.02;
+                mesh.material.needsUpdate = true;
               }
             }
             // Desk legs (Plane) -> Matte dark metal
             else if (name === "Plane" || name.includes("Plane009")) {
-              if (child.material) {
-                child.material.color.setHex(0x121316);
-                child.material.roughness = 0.6;
-                child.material.metalness = 0.8;
-                child.material.needsUpdate = true;
+              if (mesh.material) {
+                mesh.material.color.setHex(0x121316);
+                mesh.material.roughness = 0.6;
+                mesh.material.metalness = 0.8;
+                mesh.material.needsUpdate = true;
               }
             }
           }
 
-          // Identify and isolate workstation meshes (desk, chair, keyboard, monitor, screenlight, floor)
           const nodeName = child.name || "";
-          const isWorkstation =
-            nodeName.includes("Plane.004") ||
-            nodeName.includes("Plane004") ||
-            nodeName.includes("screenlight") ||
-            nodeName.includes("Keyboard") ||
-            nodeName.includes("Plane.002") ||
-            nodeName.includes("Plane002") ||
-            nodeName === "Plane" ||
-            nodeName.includes("ground") ||
-            nodeName.includes("Cube.002") ||
-            nodeName.includes("Cube002") ||
-            nodeName.includes("Plane.003") ||
-            nodeName.includes("Plane003") ||
-            nodeName.startsWith("KEYS");
 
-          if (isWorkstation) {
-            workstationMeshes.push(child);
-            // STRICTLY HIDDEN IN HERO & ABOUT SECTIONS
-            child.visible = false;
-          }
-
-          // Monitor & Screenlight specifics
-          if (nodeName === "Plane.004" || nodeName === "Plane004") {
+          // Monitor specifics: hidden in Hero so it NEVER blocks the face or text!
+          if (nodeName.includes("Plane.004") || nodeName.includes("Plane004")) {
             monitorObject = child;
             initialMonitorPos = child.position.clone();
+            child.scale.set(0.0001, 0.0001, 0.0001);
             child.visible = false;
-            child.traverse((sub: any) => {
-              if (sub.isMesh && sub.material) {
-                if (sub.material.name === "Material.027") {
-                  monitorMesh = sub;
-                  sub.material.transparent = true;
-                  sub.material.opacity = 0;
-                  sub.material.color.setHex(0x00d2ff);
-                  sub.material.needsUpdate = true;
-                } else if (sub.material.name === "Material.028") {
-                  sub.material.color.setHex(0x22232a);
-                  sub.material.needsUpdate = true;
+            child.traverse((sub: THREE.Object3D) => {
+              if ((sub as THREE.Mesh).isMesh && (sub as THREE.Mesh).material) {
+                const subMesh = sub as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+                if (subMesh.material.name === "Material.027") {
+                  subMesh.material.transparent = true;
+                  subMesh.material.opacity = 1;
+                  subMesh.material.color.setHex(0x00d2ff);
+                  subMesh.material.needsUpdate = true;
+                } else if (subMesh.material.name === "Material.028") {
+                  subMesh.material.color.setHex(0x14151a);
+                  subMesh.material.roughness = 0.95; // Soft matte finish, eliminates blown-out white glare!
+                  subMesh.material.metalness = 0.05;
+                  subMesh.material.needsUpdate = true;
                 }
               }
             });
           }
 
+          // Screenlight glow: hidden in Hero so it NEVER casts premature glare!
           if (nodeName === "screenlight") {
-            screenLight = child;
-            initialScreenLightPos = child.position.clone();
-            child.visible = false;
-            if (child.material) {
-              child.material.transparent = true;
-              child.material.opacity = 0;
-              child.material.emissive.setHex(0x00d2ff);
-              child.material.emissiveIntensity = 5;
-              child.material.needsUpdate = true;
+            const mesh = child as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+            screenLight = mesh;
+            initialScreenLightPos = mesh.position.clone();
+            mesh.scale.set(0.0001, 0.0001, 0.0001);
+            mesh.visible = false;
+            if (mesh.material) {
+              mesh.material.transparent = true;
+              mesh.material.opacity = 1;
+              mesh.material.emissive.setHex(0x00d2ff);
+              mesh.material.emissiveIntensity = 0.8;
+              mesh.material.needsUpdate = true;
             }
           }
         });
@@ -363,12 +366,12 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         // Fade in lighting & rim glow
         gsap.to(scene, {
-          environmentIntensity: 0.65,
+          environmentIntensity: 0.45,
           duration: 1.8,
           ease: "power2.inOut",
         });
         gsap.to(directionalLight, {
-          intensity: 1.2,
+          intensity: 1.0,
           duration: 1.8,
           ease: "power2.inOut",
         });
@@ -380,126 +383,189 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
         // Register GSAP ScrollTrigger Choreography (Desktop only)
         if (isDesktopView) {
-          const setWorkstationVisibility = (visible: boolean) => {
-            workstationMeshes.forEach((mesh) => {
-              mesh.visible = visible;
-            });
-            if (monitorObject) monitorObject.visible = visible;
-            if (screenLight) screenLight.visible = visible;
-          };
-
-          // TL1: Hero Section Scroll -> Character turns slightly, camera zooms out, hero typography fades
-          const tl1 = gsap.timeline({
+          // Single Unified Master Timeline: Seamless choreography from Hero Bust directly to Workstation Desk
+          const heroToWorkstationTl = gsap.timeline({
             scrollTrigger: {
               trigger: ".landing-section",
               start: "top top",
               end: "bottom top",
-              scrub: 0.6,
+              scrub: 0.25,
               invalidateOnRefresh: true,
-              onLeaveBack: () => setWorkstationVisibility(false),
-            },
-          });
-          tl1
-            .fromTo(char.rotation, { y: 0 }, { y: 0.7, duration: 1 }, 0)
-            .to(camera.position, { z: 22 }, 0)
-            .fromTo(".character-model", { x: 0 }, { x: "-25%", duration: 1 }, 0)
-            .to(".landing-container", { opacity: 0, duration: 0.4 }, 0)
-            .to(".landing-container", { y: "40%", duration: 0.8 }, 0);
-
-          // TL2: Seamless transition into "What I Do" (Workstation only reveals when entering What I Do)
-          const tl2 = gsap.timeline({
-            scrollTrigger: {
-              trigger: ".whatIDO",
-              start: "top 95%",
-              end: "top 20%",
-              scrub: 0.6,
-              invalidateOnRefresh: true,
-              onEnter: () => setWorkstationVisibility(true),
+              onEnter: () => {
+                const el = rootRef.current;
+                if (el) {
+                  el.style.visibility = "visible";
+                  el.style.opacity = "1";
+                }
+                const modelEl = el?.querySelector(".character-model") as HTMLElement | null;
+                if (modelEl) {
+                  modelEl.style.opacity = "1";
+                }
+                if (monitorObject) monitorObject.visible = false;
+                if (screenLight) screenLight.visible = false;
+              },
+              onEnterBack: () => {
+                const el = rootRef.current;
+                if (el) {
+                  el.style.visibility = "visible";
+                  el.style.opacity = "1";
+                }
+                const modelEl = el?.querySelector(".character-model") as HTMLElement | null;
+                if (modelEl) {
+                  modelEl.style.opacity = "1";
+                }
+              },
               onLeaveBack: () => {
-                setWorkstationVisibility(false);
-                if (monitorObject && initialMonitorPos) monitorObject.position.copy(initialMonitorPos);
-                if (screenLight && initialScreenLightPos) screenLight.position.copy(initialScreenLightPos);
-                if (monitorMesh) monitorMesh.material.opacity = 0;
-                if (screenLight?.material) screenLight.material.opacity = 0;
-                if (floorGlowLight) floorGlowLight.intensity = 0;
+                if (monitorObject && initialMonitorPos) {
+                  monitorObject.visible = false;
+                  monitorObject.scale.set(0.0001, 0.0001, 0.0001);
+                  monitorObject.position.copy(initialMonitorPos);
+                }
+                if (screenLight && initialScreenLightPos) {
+                  screenLight.visible = false;
+                  screenLight.scale.set(0.0001, 0.0001, 0.0001);
+                  screenLight.position.copy(initialScreenLightPos);
+                }
+                const el = rootRef.current;
+                if (el) {
+                  el.style.visibility = "visible";
+                  el.style.opacity = "1";
+                }
+                const modelEl = el?.querySelector(".character-model") as HTMLElement | null;
+                if (modelEl) {
+                  modelEl.style.opacity = "1";
+                  modelEl.style.transform = "none";
+                }
               },
             },
+            onUpdate: function () {
+              const p = this.progress();
+              // Screen strictly emerges LATER: only after Hero text has vanished and camera is wide (p >= 0.58)
+              const showMonitor = p >= 0.58;
+              if (monitorObject) {
+                monitorObject.visible = showMonitor;
+              }
+              if (screenLight) {
+                screenLight.visible = showMonitor;
+              }
+            },
           });
 
-          tl2
-            .to(camera.position, { z: 75, y: 8.4, duration: 6, delay: 0.2, ease: "power3.inOut" }, 0)
-            .fromTo(
-              ".character-model",
-              { pointerEvents: "inherit", x: "-25%" },
-              { pointerEvents: "none", x: "-12%", delay: 0.2, duration: 5 },
-              0
-            )
-            .to(char.rotation, { y: 0.92, x: 0.12, delay: 1, duration: 3 }, 0);
+          // 1. Hero text & bottom bar fade out smoothly in the first 35% of scroll
+          heroToWorkstationTl
+            .set(".landing-container", { pointerEvents: "auto" }, 0)
+            .to(".landing-container, .hero-bottom-bar", { opacity: 0, duration: 0.35, ease: "power1.inOut" }, 0)
+            .set(".landing-container", { pointerEvents: "none" }, 0.35)
+            .to(".landing-container", { y: "15%", duration: 0.45, ease: "power1.inOut" }, 0);
+
+          // 2. Camera pulls back smoothly and directly to workstation framing (z: 83.5, y: 8.7) - NO intermediate zoom, NO jumps!
+          heroToWorkstationTl
+            .fromTo(camera.position, { z: 26.5, y: 13.0 }, { z: 83.5, y: 8.7, duration: 1, ease: "power2.inOut" }, 0)
+            .fromTo(char.rotation, { y: 0, x: 0 }, { y: 0.95, x: 0.10, duration: 1, ease: "power2.inOut" }, 0)
+            .fromTo(".character-model", { x: "0%" }, { x: "-9%", duration: 1, ease: "power2.inOut" }, 0);
 
           if (neckBone) {
-            tl2.to(neckBone.rotation, { x: 0.6, delay: 1, duration: 3 }, 0);
+            heroToWorkstationTl.to(neckBone.rotation, { x: 0.6, duration: 1, ease: "power2.inOut" }, 0);
           }
 
-          // Subtle ambient glow under desk (Image 3)
-          tl2.to(floorGlowLight, { intensity: 2.2, duration: 2, delay: 1.5 }, 0);
-
-          // Monitor & screen light rise smoothly into natural tabletop position and turn on
+          // 3. Monitor & screenlight materialize with a sleek landing onto the desk (NEVER under the desk!)
           if (monitorObject && initialMonitorPos) {
-            tl2.fromTo(
-              monitorObject.position,
-              { x: initialMonitorPos.x, y: initialMonitorPos.y - 3, z: initialMonitorPos.z },
-              { x: initialMonitorPos.x, y: initialMonitorPos.y, z: initialMonitorPos.z, delay: 1.2, duration: 3 },
-              0
-            );
+            heroToWorkstationTl
+              .fromTo(
+                monitorObject.position,
+                { y: initialMonitorPos.y + 1.2 },
+                { y: initialMonitorPos.y, duration: 0.22, ease: "power2.out" },
+                0.58
+              )
+              .fromTo(
+                monitorObject.scale,
+                { x: 0.0001, y: 0.0001, z: 0.0001 },
+                { x: 1, y: 1, z: 1, duration: 0.22, ease: "back.out(1.15)" },
+                0.58
+              );
           }
 
           if (screenLight && initialScreenLightPos) {
-            tl2.fromTo(
-              screenLight.position,
-              { x: initialScreenLightPos.x, y: initialScreenLightPos.y - 3, z: initialScreenLightPos.z },
-              { x: initialScreenLightPos.x, y: initialScreenLightPos.y, z: initialScreenLightPos.z, delay: 1.2, duration: 3 },
-              0
-            );
+            heroToWorkstationTl
+              .fromTo(
+                screenLight.position,
+                { y: initialScreenLightPos.y + 1.2 },
+                { y: initialScreenLightPos.y, duration: 0.22, ease: "power2.out" },
+                0.58
+              )
+              .fromTo(
+                screenLight.scale,
+                { x: 0.0001, y: 0.0001, z: 0.0001 },
+                { x: 1, y: 1, z: 1, duration: 0.22, ease: "back.out(1.15)" },
+                0.58
+              );
           }
 
-          if (monitorMesh) {
-            tl2.to(monitorMesh.material, { opacity: 1, duration: 0.8, delay: 2.5 }, 0);
-          }
-          if (screenLight && screenLight.material) {
-            tl2.to(screenLight.material, { opacity: 1, duration: 0.8, delay: 3.0 }, 0);
-          }
-
-          tl2.fromTo(
+          heroToWorkstationTl.fromTo(
             ".character-rim",
             { opacity: 0.9, scale: 1.3 },
-            { opacity: 0, scale: 0, y: "-70%", duration: 5, delay: 0.2 },
+            { opacity: 0, scale: 0, y: "-70%", duration: 0.8 },
             0
           );
 
-          // TL3: What I Do Section -> Character stays seated typing, then glides up past viewport
-          const tl3 = gsap.timeline({
+          if (heroToWorkstationTl.scrollTrigger) scrollTriggers.push(heroToWorkstationTl.scrollTrigger);
+
+          // Workstation Smooth Exit Timeline: Fades out "little by little" as the marquee approaches!
+          const workstationExitTl = gsap.timeline({
             scrollTrigger: {
-              trigger: ".whatIDO",
-              start: "top top",
-              end: "bottom top",
-              scrub: 0.6,
+              trigger: "#projects-marquee",
+              start: "top 95%", // as the marquee enters from the bottom
+              end: "top 35%",   // by the time the marquee reaches near top
+              scrub: 0.25,
               invalidateOnRefresh: true,
             },
           });
 
-          tl3
-            .fromTo(
-              ".character-model",
-              { y: "0%" },
-              { y: "-110%", duration: 4, ease: "none", delay: 1 },
-              0
-            )
-            .fromTo(".whatIDO", { y: 0 }, { y: "15%", duration: 2 }, 0)
-            .to(char.rotation, { x: -0.04, duration: 2, delay: 1 }, 0);
+          workstationExitTl
+            .to(".character-model", { opacity: 0, scale: 0.94, y: "-6%", duration: 1, ease: "power1.inOut" }, 0)
+            .to(floorGlowLight, { intensity: 0, duration: 0.8 }, 0);
 
-          if (tl1.scrollTrigger) scrollTriggers.push(tl1.scrollTrigger);
-          if (tl2.scrollTrigger) scrollTriggers.push(tl2.scrollTrigger);
-          if (tl3.scrollTrigger) scrollTriggers.push(tl3.scrollTrigger);
+          if (workstationExitTl.scrollTrigger) scrollTriggers.push(workstationExitTl.scrollTrigger);
+
+          // Absolute Sentinel on #projects-marquee / #projects: shut off canvas completely once scrolled past marquee into Projects
+          const projectsSentinel = ScrollTrigger.create({
+            trigger: "#projects-marquee",
+            start: "bottom top",
+            end: "max",
+            onEnter: () => {
+              const el = rootRef.current;
+              if (el) {
+                el.style.visibility = "hidden";
+                el.style.pointerEvents = "none";
+              }
+            },
+            onLeaveBack: () => {
+              const el = rootRef.current;
+              if (el) {
+                el.style.visibility = "visible";
+              }
+              const modelEl = el?.querySelector(".character-model") as HTMLElement | null;
+              if (modelEl) {
+                modelEl.style.opacity = "1";
+              }
+              if (floorGlowLight) floorGlowLight.intensity = 1.2;
+            },
+          });
+
+          scrollTriggers.push(projectsSentinel);
+        } else {
+          // Mobile & Tablet lightweight scroll fade out
+          const mobileTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".landing-section",
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.5,
+              invalidateOnRefresh: true,
+            },
+          });
+          mobileTl.to(".character-model", { opacity: 0, duration: 1 });
+          if (mobileTl.scrollTrigger) scrollTriggers.push(mobileTl.scrollTrigger);
         }
 
         onLoaded?.();
@@ -533,9 +599,39 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       hoverDiv.addEventListener("mouseleave", handleFaceLeave);
     }
 
+    // Viewport Culling: Pause GPU render loop only when scrolled completely past marquee into Projects
+    let isVisibleInViewport = true;
+    const checkVisibility = () => {
+      const exitEl = document.getElementById("projects-marquee") || document.getElementById("projects");
+      const rootEl = rootRef.current;
+      if (!exitEl || !rootEl) return;
+
+      const exitRect = exitEl.getBoundingClientRect();
+
+      // When Projects marquee has scrolled past the top of the viewport
+      if (exitRect.bottom <= 0) {
+        if (isVisibleInViewport) {
+          isVisibleInViewport = false;
+          rootEl.style.visibility = "hidden";
+          rootEl.style.pointerEvents = "none";
+        }
+      } else {
+        if (!isVisibleInViewport) {
+          isVisibleInViewport = true;
+          rootEl.style.visibility = "visible";
+          rootEl.style.pointerEvents = "none";
+          if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+          }
+        }
+      }
+    };
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    checkVisibility();
+
     // Mouse Tracking for Head Rotation
-    let mouse = { x: 0, y: 0 };
-    let targetRotation = { x: 0, y: 0 };
+    const mouse = { x: 0, y: 0 };
+    const targetRotation = { x: 0, y: 0 };
 
     const handleWindowMouseMove = (e: MouseEvent) => {
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -548,7 +644,6 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     const handleWindowResize = () => {
       if (!mountRef.current) return;
       const desktop = window.innerWidth > 1024;
-      setIsDesktop(desktop);
 
       width = desktop ? window.innerWidth : mountRef.current.clientWidth || window.innerWidth;
       height = desktop ? window.innerHeight : mountRef.current.clientHeight || 450;
@@ -568,6 +663,12 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      checkVisibility();
+
+      // Smart GPU Culling: skip Three.js render calculations when off-screen
+      if (!isVisibleInViewport) {
+        return;
+      }
 
       // Rotate head smoothly towards mouse when in hero section, return to focused typing when scrolled
       if (headBone) {
@@ -590,9 +691,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
         }
       }
 
-      // Point light sync with monitor screen
+      // Soft point light sync with monitor screen
       if (screenLight && screenLight.visible && screenLight.material && screenLight.material.opacity > 0.5) {
-        pointLight.intensity = (screenLight.material.emissiveIntensity || 5) * 3.0;
+        pointLight.intensity = Math.min((screenLight.material.emissiveIntensity || 1) * 1.2, 2.0);
       } else {
         pointLight.intensity = 0;
       }
@@ -609,6 +710,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", handleWindowMouseMove);
       window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener("scroll", checkVisibility);
 
       if (hoverDiv) {
         hoverDiv.removeEventListener("mouseenter", handleFaceEnter);
@@ -626,7 +728,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
   }, [onLoaded]);
 
   return (
-    <div className={`character-container ${className}`}>
+    <div ref={rootRef} className={`character-container ${className}`}>
       <div className="character-model">
         {/* Luminous Purple & Cyan Rim Glow (Image 2) */}
         <div className="character-rim" />

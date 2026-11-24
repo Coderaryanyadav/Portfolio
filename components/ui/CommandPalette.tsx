@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, X, CornerDownLeft, Sparkles, FolderGit2, ArrowUpRight } from "lucide-react";
+import { X, CornerDownLeft } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
 import { PROJECTS, Project } from "@/data/projects";
 import { sounds } from "@/lib/sound";
@@ -62,9 +62,10 @@ export default function CommandPalette({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-300 font-mono">
           <div><button onClick={() => executeCommand("projects")} className="text-cyan-400 font-bold hover:underline">projects</button> : List all 14 audited repositories</div>
           <div><button onClick={() => executeCommand("skills")} className="text-cyan-400 font-bold hover:underline">skills</button> : Inspect technical ecosystem</div>
-          <div><button onClick={() => executeCommand("whoami")} className="text-cyan-400 font-bold hover:underline">whoami</button> : Display Aryan's bio</div>
-          <div><button onClick={() => executeCommand("resume")} className="text-cyan-400 font-bold hover:underline">resume / cv</button> : View Curriculum Vitae</div>
-          <div><button onClick={() => executeCommand("contact")} className="text-cyan-400 font-bold hover:underline">contact</button> : Direct communication channels</div>
+          <div><button onClick={() => executeCommand("whoami")} className="text-cyan-400 font-bold hover:underline">whoami</button> : Display Aryan&apos;s bio</div>
+          <div><button onClick={() => executeCommand("resume")} className="text-cyan-400 font-bold hover:underline">resume / cv (r)</button> : View Curriculum Vitae</div>
+          <div><button onClick={() => executeCommand("contact")} className="text-cyan-400 font-bold hover:underline">contact (c)</button> : Direct communication channels</div>
+          <div><span className="text-cyan-400 font-bold">1 - 6</span> : Jump to section #1-#6</div>
           <div><button onClick={() => executeCommand("github")} className="text-cyan-400 font-bold hover:underline">github</button> : Open GitHub profile</div>
           <div><span className="text-cyan-400 font-bold">open &lt;name&gt;</span> : Launch project case study</div>
           <div><button onClick={() => executeCommand("clear")} className="text-cyan-400 font-bold hover:underline">clear</button> : Wipe terminal buffer</div>
@@ -77,10 +78,34 @@ export default function CommandPalette({
           <p className="text-zinc-400">{PERSONAL.aboutDetailed}</p>
         </div>
       );
-    } else if (clean === "resume" || clean === "cv") {
+    } else if (clean === "resume" || clean === "cv" || clean === "r") {
       onOpenResume?.();
       onClose();
       resultNode = <span className="text-cyan-400">Opening Curriculum Vitae...</span>;
+    } else if (clean === "1" || clean === "about") {
+      onClose();
+      window.location.hash = "#about";
+      resultNode = <span className="text-cyan-400">Navigating to Phase 01: About & Identity...</span>;
+    } else if (clean === "2" || clean === "what-i-do" || clean === "what") {
+      onClose();
+      window.location.hash = "#what-i-do";
+      resultNode = <span className="text-cyan-400">Navigating to Phase 02: What I Do Workstation...</span>;
+    } else if (clean === "3" || clean === "work") {
+      onClose();
+      window.location.hash = "#projects";
+      resultNode = <span className="text-cyan-400">Navigating to Phase 03: Audited Projects...</span>;
+    } else if (clean === "4") {
+      onClose();
+      window.location.hash = "#skills";
+      resultNode = <span className="text-cyan-400">Navigating to Technical Capabilities...</span>;
+    } else if (clean === "5" || clean === "journey") {
+      onClose();
+      window.location.hash = "#journey";
+      resultNode = <span className="text-cyan-400">Navigating to Engineering Journey...</span>;
+    } else if (clean === "6" || clean === "contact" || clean === "c") {
+      onClose();
+      window.location.hash = "#contact";
+      resultNode = <span className="text-cyan-400">Navigating to Direct Communication Channels...</span>;
     } else if (clean === "projects" || clean === "ls") {
       resultNode = (
         <div className="space-y-2 text-xs font-mono">
@@ -115,7 +140,7 @@ export default function CommandPalette({
         onClose();
         resultNode = <span className="text-emerald-400">Opening case study for {match.title}...</span>;
       } else {
-        resultNode = <span className="text-rose-400">Error: Project '{targetName}' not found. Type 'projects' to view valid list.</span>;
+        resultNode = <span className="text-rose-400">Error: Project &apos;{targetName}&apos; not found. Type &apos;projects&apos; to view valid list.</span>;
       }
     } else if (clean === "skills") {
       resultNode = (
@@ -139,7 +164,7 @@ export default function CommandPalette({
     } else {
       resultNode = (
         <span className="text-zinc-500">
-          Command not recognized: '{clean}'. Type <span className="text-cyan-400 font-bold">help</span> to view commands.
+          Command not recognized: &apos;{clean}&apos;. Type <span className="text-cyan-400 font-bold">help</span> to view commands.
         </span>
       );
     }
@@ -176,7 +201,7 @@ export default function CommandPalette({
               <span className="w-3 h-3 rounded-full bg-rose-500/80" />
               <span className="w-3 h-3 rounded-full bg-amber-500/80" />
               <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-              <span className="ml-2 text-xs text-zinc-300 font-bold">aryan@terminal: ~ (Type 'help' or click chips)</span>
+              <span className="ml-2 text-xs text-zinc-300 font-bold">aryan@terminal: ~ (Type &apos;help&apos; or click chips)</span>
             </div>
             <button
               onClick={onClose}

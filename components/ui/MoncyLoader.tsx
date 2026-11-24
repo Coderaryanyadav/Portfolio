@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { sounds } from "@/lib/sound";
 import { ArrowRight } from "lucide-react";
 
@@ -15,7 +15,27 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
   const [hidden, setHidden] = useState(false);
   const buttonWrapRef = useRef<HTMLDivElement>(null);
 
+  const triggerEnter = useCallback(() => {
+    sounds.playClick();
+    setIsClicked(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("portfolio_loader_seen", "true");
+    }
+    document.body.style.overflow = "unset";
+    setTimeout(() => {
+      setHidden(true);
+      onComplete?.();
+    }, 800);
+  }, [onComplete]);
+
   useEffect(() => {
+    // Skip loader if visitor has already completed it this session
+    if (typeof window !== "undefined" && sessionStorage.getItem("portfolio_loader_seen") === "true") {
+      setHidden(true);
+      onComplete?.();
+      return;
+    }
+
     // Lock body scroll while loader is visible
     document.body.style.overflow = "hidden";
 
@@ -47,7 +67,7 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, []);
+  }, [triggerEnter, onComplete]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!buttonWrapRef.current) return;
@@ -56,16 +76,6 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
     const y = e.clientY - rect.top;
     buttonWrapRef.current.style.setProperty("--mouse-x", `${x}px`);
     buttonWrapRef.current.style.setProperty("--mouse-y", `${y}px`);
-  };
-
-  const triggerEnter = () => {
-    sounds.playClick();
-    setIsClicked(true);
-    document.body.style.overflow = "unset";
-    setTimeout(() => {
-      setHidden(true);
-      onComplete?.();
-    }, 800);
   };
 
   if (hidden) return null;

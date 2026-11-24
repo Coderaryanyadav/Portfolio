@@ -58,7 +58,7 @@ export default function Footer() {
               <span className="font-heading font-bold text-lg text-white">Aryan Yadav</span>
             </div>
             <p className="text-sm text-zinc-400 max-w-sm font-sans leading-relaxed">
-              Engineering student and developer focused on offline-first AI, cybersecurity, systems architecture, and intuitive digital tools.
+              Information Technology student and developer focused on offline-first AI, cybersecurity, systems architecture, and intuitive digital tools.
             </p>
           </div>
 

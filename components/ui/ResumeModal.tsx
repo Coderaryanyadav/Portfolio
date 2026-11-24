@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, Printer, CheckCircle2, FileText, ArrowUpRight } from "lucide-react";
+import { X, Printer, FileText, Download } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
 
 interface ResumeModalProps {
@@ -54,6 +54,16 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
               </span>
             </div>
             <div className="flex items-center gap-2">
+              <a
+                href="/resume.pdf"
+                download="Aryan_Yadav_Resume.pdf"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 hover:text-white text-xs font-mono transition-all font-bold shadow-[0_0_15px_rgba(0,210,255,0.2)]"
+                title="Download Aryan's Resume (PDF)"
+              >
+                <Download size={13} />
+                <span>Download PDF</span>
+              </a>
+
               <button
                 onClick={() => window.print()}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-mono transition-colors"

@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Terminal, FileText, Mail } from "lucide-react";
-import SoundToggle from "../ui/SoundToggle";
+import { Menu, X, Terminal, FileText, Download } from "lucide-react";
 import HoverLink from "../ui/HoverLink";
 import { sounds } from "@/lib/sound";
 
 const NAV_ITEMS = [
-  { label: "ABOUT", href: "#about" },
   { label: "WHAT I DO", href: "#what-i-do" },
+  { label: "ABOUT", href: "#about" },
   { label: "WORK", href: "#projects" },
   { label: "SKILLS", href: "#skills" },
   { label: "JOURNEY", href: "#journey" },
@@ -30,13 +29,23 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      const sections = ["hero", "about", "what-i-do", "projects", "skills", "journey", "contact"];
+      // Hero section guard: when near the top, active section is strictly hero
+      if (window.scrollY < window.innerHeight * 0.5) {
+        setActiveSection("hero");
+        return;
+      }
+
+      const sections = ["what-i-do", "projects", "skills", "journey", "contact"];
       const scrollPosition = window.scrollY + 250;
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i]);
         if (el && el.offsetTop <= scrollPosition) {
-          setActiveSection(sections[i]);
+          if (sections[i] === "what-i-do" && window.location.hash === "#about") {
+            setActiveSection("about");
+          } else {
+            setActiveSection(sections[i]);
+          }
           break;
         }
       }
@@ -54,7 +63,10 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
       <div className="nav-fade" />
 
       {/* Main Floating Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 flex justify-center items-center py-4 px-4 sm:px-8">
+      <header
+        style={{ paddingTop: "max(1rem, env(safe-area-inset-top, 1rem))" }}
+        className="fixed top-0 left-0 right-0 z-40 flex justify-center items-center px-4 sm:px-8"
+      >
         <motion.div
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -79,17 +91,8 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
             </span>
           </a>
 
-          {/* Center: Moncy Signature Direct Email Connect */}
-          <a
-            href="mailto:coderaryanyadav@gmail.com"
-            className="hidden xl:inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 hover:text-cyan-400 transition-colors px-3 py-1 rounded-full bg-white/[0.02] border border-white/5 hover:border-cyan-500/30"
-          >
-            <Mail size={12} className="text-cyan-400" />
-            <span>coderaryanyadav@gmail.com</span>
-          </a>
-
-          {/* Right: Desktop Nav Links with Moncy.dev HoverLinks Flip Effect */}
-          <nav className="hidden md:flex items-center gap-2 bg-white/[0.03] border border-white/5 px-3 py-1.5 rounded-full">
+          {/* Center: Desktop Nav Links with Moncy.dev HoverLinks Flip Effect */}
+          <nav className="hidden md:flex items-center gap-1 bg-[#090b14]/80 backdrop-blur-md border border-white/10 px-2 py-1.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.href.substring(1);
               return (
@@ -97,8 +100,10 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => sounds.playClick()}
-                  className={`px-3 py-1 text-xs font-mono tracking-wider transition-colors relative ${
-                    isActive ? "text-cyan-400 font-bold" : "text-zinc-400 hover:text-white"
+                  className={`px-3 py-1 text-xs font-mono tracking-wider transition-all rounded-full whitespace-nowrap ${
+                    isActive
+                      ? "text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 shadow-[0_0_12px_rgba(0,210,255,0.15)] font-bold"
+                      : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
                   }`}
                 >
                   <HoverLink text={item.label} />
@@ -107,7 +112,7 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
             })}
           </nav>
 
-          {/* Actions: Terminal (⌘K), Audio, Mobile Menu */}
+          {/* Actions: Terminal (⌘K), Direct PDF Resume, Audio, Mobile Menu */}
           <div className="flex items-center gap-2">
             {/* Terminal ⌘K button */}
             <button
@@ -122,8 +127,16 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
               <span>⌘K</span>
             </button>
 
-            {/* Audio Toggle */}
-            <SoundToggle />
+            {/* Direct Resume PDF Download Pill */}
+            <a
+              href="/resume.pdf"
+              download="Aryan_Yadav_Resume.pdf"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-xs font-mono text-cyan-300 hover:text-white transition-all cursor-pointer font-bold whitespace-nowrap"
+              title="Download Resume (PDF)"
+            >
+              <Download size={12} className="text-cyan-400" />
+              <span>RESUME</span>
+            </a>
 
             {/* Mobile Menu Toggle Button */}
             <button
@@ -167,6 +180,19 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
             </div>
 
             <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
+              <a
+                href="/resume.pdf"
+                download="Aryan_Yadav_Resume.pdf"
+                onClick={() => {
+                  sounds.playClick();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs uppercase tracking-wider"
+              >
+                <Download size={13} />
+                <span>Download Resume (PDF)</span>
+              </a>
+
               <button
                 onClick={() => {
                   sounds.playClick();
@@ -176,7 +202,7 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-xs uppercase tracking-wider"
               >
                 <FileText size={13} className="text-cyan-400" />
-                <span>View Resume</span>
+                <span>View Interactive CV</span>
               </button>
 
               <button

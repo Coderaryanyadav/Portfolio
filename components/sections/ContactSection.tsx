@@ -11,9 +11,9 @@ import {
   Linkedin,
   Send,
   AlertCircle,
+  Calendar,
 } from "lucide-react";
 import { PERSONAL } from "@/data/personal";
-import Cyber3DCanvas from "./Cyber3DCanvas";
 import { sounds } from "@/lib/sound";
 
 export default function ContactSection() {
@@ -52,7 +52,7 @@ export default function ContactSection() {
         setStatus("error");
         setErrorMessage(data.error || "Failed to submit message. Please try again.");
       }
-    } catch (err) {
+    } catch {
       // Graceful fallback to mailto
       setStatus("error");
       setErrorMessage("Network error. You can also send an email directly using the button above.");
@@ -60,11 +60,8 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 sm:py-32 px-6 sm:px-10 relative overflow-hidden">
+    <section id="contact" className="py-24 sm:py-32 px-6 sm:px-10 relative overflow-hidden z-20 bg-[#06070d]">
       <div className="max-w-7xl mx-auto space-y-16">
-        {/* 3D Visual Canvas Accent */}
-        <Cyber3DCanvas />
-
         {/* Section Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
@@ -72,38 +69,56 @@ export default function ContactSection() {
             <span>06 — Communication & Inquiry</span>
           </div>
           <h2 className="text-4xl sm:text-6xl md:text-7xl font-heading font-extrabold tracking-tight text-white max-w-4xl">
-            "Have an interesting idea? Let's build it."
+            &ldquo;Have an interesting idea? Let&apos;s build it.&rdquo;
           </h2>
           <p className="text-base sm:text-lg text-zinc-400 font-sans max-w-2xl leading-relaxed">
-            I'm always interested in exploring new technologies, solving meaningful problems and collaborating on high-integrity software and systems engineering.
+            I&apos;m always interested in exploring new technologies, solving meaningful problems and collaborating on high-integrity software and systems engineering.
           </p>
         </div>
 
         {/* Giant Interactive Email Copy CTA */}
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#090b12] border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group">
-          <div className="space-y-2">
+        <div className="p-8 sm:p-10 rounded-3xl bg-[#090b12] border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 group">
+          <div className="space-y-1.5 min-w-0">
             <span className="font-mono text-xs text-cyan-400 uppercase tracking-widest block">
               Direct Contact
             </span>
-            <span className="font-heading font-bold text-2xl sm:text-4xl md:text-5xl text-white group-hover:text-cyan-400 transition-colors break-all">
-              {PERSONAL.email}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
             <button
               onClick={handleCopyEmail}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-semibold transition-all border border-white/10"
+              className="text-left group/copy block focus:outline-none"
+              title="Click to copy email address"
+            >
+              <span className="font-heading font-bold text-xl sm:text-3xl lg:text-4xl text-white group-hover/copy:text-cyan-400 transition-colors tracking-tight select-all">
+                {PERSONAL.email}
+              </span>
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <a
+              href={PERSONAL.calUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => sounds.playClick()}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs uppercase tracking-wider hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
+            >
+              <Calendar size={15} />
+              <span>Book 15-Min Chat</span>
+              <ArrowUpRight size={14} />
+            </a>
+
+            <button
+              onClick={handleCopyEmail}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-semibold transition-all border border-white/10"
               aria-label="Copy email address"
             >
               {copied ? (
                 <>
-                  <Check size={16} className="text-cyan-400" />
+                  <Check size={15} className="text-cyan-400" />
                   <span>Email Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy size={16} />
+                  <Copy size={15} />
                   <span>Copy Address</span>
                 </>
               )}
@@ -112,9 +127,9 @@ export default function ContactSection() {
             <a
               href={`mailto:${PERSONAL.email}?subject=Collaboration%20Inquiry&body=Hi%20Aryan,%0A%0AI%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20regarding...`}
               onClick={() => sounds.playClick()}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs uppercase tracking-wider hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white font-mono text-xs font-semibold transition-all"
             >
-              <Mail size={16} />
+              <Mail size={15} className="text-cyan-400" />
               <span>Compose Email</span>
             </a>
           </div>
@@ -224,6 +239,31 @@ export default function ContactSection() {
               </span>
 
               <div className="space-y-4">
+                {/* 1-Click 15-Minute Intro Call (Cal.com) */}
+                <a
+                  href={PERSONAL.calUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => sounds.playClick()}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/40 hover:bg-cyan-500/20 group transition-all shadow-[0_0_25px_rgba(0,210,255,0.15)]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                      <Calendar size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-heading font-bold text-sm text-white group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+                        <span>Schedule 15-Min Intro Call</span>
+                        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
+                          CAL.COM
+                        </span>
+                      </h4>
+                      <span className="font-mono text-xs text-zinc-400">Recruiter, Internship &amp; Engineering Chat</span>
+                    </div>
+                  </div>
+                  <ArrowUpRight size={18} className="text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </a>
+
                 {/* GitHub */}
                 <a
                   href={PERSONAL.links.github}
@@ -262,7 +302,7 @@ export default function ContactSection() {
                       <h4 className="font-heading font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">
                         LinkedIn
                       </h4>
-                      <span className="font-mono text-xs text-zinc-400">aryan-yadav</span>
+                      <span className="font-mono text-xs text-zinc-400">aryanjyadav</span>
                     </div>
                   </div>
                   <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />

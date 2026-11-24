@@ -392,6 +392,92 @@ export const PROJECTS: Project[] = [
     },
   },
   {
+    id: "flashfit",
+    title: "FlashFit",
+    category: "Quick-Commerce / Turborepo / Logistics",
+    domain: "fullstack",
+    tagline: "Ultra-Fast 60-Minute Fashion & Activewear Quick-Commerce Platform",
+    shortDescription:
+      "A 4-application Turborepo monorepo encompassing a customer storefront, admin operations command center, driver dispatch portal, and seller dashboard with sub-minute order fulfillment loops and 50/50 Jest test coverage.",
+    techStack: ["Next.js 14", "TypeScript", "Turborepo", "Firebase Firestore", "Tailwind CSS", "Jest"],
+    featured: true,
+    githubUrl: "https://github.com/Coderaryanyadav/FlashFit",
+    liveUrl: "https://flash-fit-web-customer.vercel.app",
+    year: "2024",
+    accentColor: "#F59E0B",
+    caseStudy: {
+      overview:
+        "FlashFit is an ultra-fast quick-commerce infrastructure designed to deliver activewear and fashion essentials within 60 minutes. Built as a high-velocity Turborepo monorepo, it connects customer orders directly with warehouse picking stations and hyper-local delivery partners.",
+      problem:
+        "Traditional e-commerce platforms struggle with sub-hour delivery logistics due to decoupled databases, latency in rider notification, and mismatched inventory between offline stores and customer apps.",
+      architecture: [
+        "Turborepo Monorepo Architecture: Centralized workspace coordinating Customer Web App, Admin Operations Panel, and Driver Partner Portal.",
+        "Event-Driven Order State Machine: Sub-second synchronization across Firestore listeners when an order progresses from Placed → Packed → In-Transit → Delivered.",
+        "Shared Core Package: Common TypeScript interfaces, validation schemas, and calculation engines shared across all 4 applications.",
+        "Rigorous Test Harness: 50 passing unit and integration tests covering cart calculations, inventory locks, and dispatch handlers.",
+      ],
+      technicalHighlights: [
+        "Multi-app Turborepo build caching cutting CI times by 65%.",
+        "Reactive driver routing with automated pickup assignment.",
+        "Optimistic UI updates for high-conversion instant checkouts.",
+      ],
+      securityOrOfflineAspects: [
+        "Granular Firebase security rules enforcing tenant-level access per role.",
+        "Server-side order total recalculation preventing price tampering.",
+      ],
+      challengesAndDecisions: [
+        "Managing synchronized stock depletion during flash sale events without duplicate bookings.",
+        "Architecting isolated web apps that seamlessly consume shared UI tokens and data contracts.",
+      ],
+      whatILearned: [
+        "Turborepo dependency graph optimization, complex distributed state machines, and building mission-critical quick-commerce workflows.",
+      ],
+    },
+  },
+  {
+    id: "marketmindai",
+    title: "MarketMindAI",
+    category: "Quantitative Finance / Algorithmic Trading",
+    domain: "ai",
+    tagline: "Institutional Quantitative Market Intelligence Desk for NSE India",
+    shortDescription:
+      "Production-grade quantitative analytics and algorithmic trading intelligence desk built for the Indian Equity Market (NSE), running multi-broker feeds, physical OHLC validation, Wilson score probabilities, and statutory STT cost modeling.",
+    techStack: ["Python 3.12", "FastAPI", "React 18", "TypeScript", "Tailwind CSS", "NumPy", "Pandas"],
+    featured: true,
+    githubUrl: "https://github.com/Coderaryanyadav/MarketMindAI",
+    liveUrl: "https://frontend-self-two-64.vercel.app",
+    year: "2024",
+    accentColor: "#06B6D4",
+    caseStudy: {
+      overview:
+        "MarketMindAI is an institutional-grade quantitative trading and analytics platform purpose-built for the National Stock Exchange of India (NSE). It computes high-probability trading signals using rigorous statistical models, physical tick validation, and statutory expense simulation.",
+      problem:
+        "Retail and proprietary traders often rely on ungrounded technical indicators that fail in live markets due to slippage, unvalidated candle formation, and statutory tax leakage (Securities Transaction Tax, GST, Exchange turnover fees).",
+      architecture: [
+        "FastAPI Asynchronous Engine: High-throughput Python 3.12 microservice computing multi-timeframe OHLC indicators.",
+        "Statistical Quantitative Models: Wilson score interval probability estimation, volume profile distribution, and volatility surface modeling.",
+        "Real-Time NSE Data Pipeline: Multi-broker WebSocket adapters with automatic failover and tick sanity filtering.",
+        "Full Statutory Ledger: Real-time simulation of STT, SEBI turnover charges, GST, and stamp duty directly in the P&L calculation.",
+      ],
+      technicalHighlights: [
+        "Sub-15ms statistical probability generation on high-volume indices.",
+        "Physical candlestick validation eliminating false breakouts from synthetic spikes.",
+        "23 unit and integration test suites validating execution accuracy.",
+      ],
+      securityOrOfflineAspects: [
+        "Strict API token isolation for broker credentials using environment encryption.",
+        "Zero storage of client broker passwords or private keys.",
+      ],
+      challengesAndDecisions: [
+        "Mitigating tick lag during high-volatility market open spikes without locking the UI event loop.",
+        "Balancing mathematical precision in floating-point trade calculations with sub-second rendering.",
+      ],
+      whatILearned: [
+        "Quantitative market microstructures, high-performance asynchronous Python systems, and real-time financial data visualization.",
+      ],
+    },
+  },
+  {
     id: "lostandfound",
     title: "LostAndFound",
     category: "Campus Systems / Flask",

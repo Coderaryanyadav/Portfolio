@@ -2,8 +2,22 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Github, ExternalLink, BookOpen, Search, X, Sparkles, AlertCircle } from "lucide-react";
+import {
+  ArrowUpRight,
+  Github,
+  ExternalLink,
+  BookOpen,
+  Search,
+  X,
+  AlertCircle,
+  FolderGit2,
+  ShieldCheck,
+  Activity,
+  GitBranch,
+  Sparkles,
+} from "lucide-react";
 import { PROJECTS, Project } from "@/data/projects";
+import { PERSONAL } from "@/data/personal";
 import { sounds } from "@/lib/sound";
 
 interface ProjectsSectionProps {
@@ -11,8 +25,16 @@ interface ProjectsSectionProps {
 }
 
 export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<string>("featured");
+  const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
 
   const filteredProjects = useMemo(() => {
     return PROJECTS.filter((project) => {
@@ -31,6 +53,7 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
       const matchesSearch =
         project.title.toLowerCase().includes(query) ||
         project.shortDescription.toLowerCase().includes(query) ||
+        project.tagline.toLowerCase().includes(query) ||
         project.techStack.some((tech) => tech.toLowerCase().includes(query)) ||
         project.category.toLowerCase().includes(query);
 
@@ -41,30 +64,83 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
   const featuredCount = useMemo(() => PROJECTS.filter((p) => p.featured).length, []);
 
   return (
-    <section id="projects" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <section id="projects" className="py-24 sm:py-32 px-6 sm:px-10 border-b border-white/5 relative z-20 bg-[#06070d]">
+      <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
             <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
               <span className="w-2 h-2 rounded-full bg-cyan-400" />
-              <span>02 — Featured Works & Architecture</span>
+              <span>03 — Verified Repositories &amp; Engineering Case Studies</span>
             </div>
             <h2 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight text-white">
-              "Things I've built."
+              &ldquo;Things I&apos;ve built.&rdquo;
             </h2>
-            <p className="text-base text-zinc-400 font-sans max-w-xl">
-              Experiments, ideas and engineering projects turned into working software. Resilient, offline-first, and architected for real-world utility.
+            <p className="text-base text-zinc-400 font-sans max-w-2xl leading-relaxed">
+              All 14 production systems and open-source codebases backed by publicly auditable repositories, comprehensive commits, and reproducible architectures. Click any card to inspect its deep-dive case study.
             </p>
           </div>
 
-          {/* Quick Counter */}
-          <div className="font-mono text-xs text-zinc-400 bg-white/[0.03] border border-white/10 px-4 py-2 rounded-full self-start md:self-auto">
-            <span>Displaying </span>
-            <strong className="text-cyan-400">{filteredProjects.length}</strong>
-            <span> of </span>
-            <strong className="text-white">{PROJECTS.length}</strong>
-            <span> audited projects</span>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* Quick Counter */}
+            <div className="font-mono text-xs text-zinc-400 bg-white/[0.03] border border-white/10 px-4 py-2.5 rounded-full">
+              <span>Displaying </span>
+              <strong className="text-cyan-400">{filteredProjects.length}</strong>
+              <span> of </span>
+              <strong className="text-white">{PROJECTS.length}</strong>
+              <span> audited repos</span>
+            </div>
+
+            <a
+              href={PERSONAL.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => sounds.playClick()}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs tracking-wider uppercase hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.4)] transition-all"
+            >
+              <Github size={14} />
+              <span>Visit GitHub</span>
+              <ArrowUpRight size={13} />
+            </a>
+          </div>
+        </div>
+
+        {/* Engineering Velocity & Integrity HUD */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-cyan-500/25 space-y-1">
+            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+              <FolderGit2 size={12} className="text-cyan-400" />
+              <span>Audited Codebases</span>
+            </span>
+            <div className="text-2xl font-heading font-extrabold text-white">14 Repos</div>
+            <p className="font-mono text-[11px] text-cyan-400/80">100% Publicly Auditable</p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1">
+            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck size={12} className="text-cyan-400" />
+              <span>Confidential AI</span>
+            </span>
+            <div className="text-2xl font-heading font-extrabold text-white">0KB Egress</div>
+            <p className="font-mono text-[11px] text-zinc-400">Zero Cloud Data Leakage</p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1">
+            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Activity size={12} className="text-cyan-400" />
+              <span>Spatial PostGIS</span>
+            </span>
+            <div className="text-2xl font-heading font-extrabold text-white">&lt;45ms Radius</div>
+            <p className="font-mono text-[11px] text-zinc-400">GiST Bounding Spatial Index</p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1">
+            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+              <GitBranch size={12} className="text-cyan-400" />
+              <span>Mobile State Sync</span>
+            </span>
+            <div className="text-2xl font-heading font-extrabold text-white">Sub-Second</div>
+            <p className="font-mono text-[11px] text-zinc-400">Hive Local Cache &amp; OneSignal</p>
           </div>
         </div>
 
@@ -120,13 +196,13 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
           </div>
         </div>
 
-        {/* Project Cards Grid */}
+        {/* High-Density Compact Project Cards Grid (Fits 4 per row on Desktop) */}
         {filteredProjects.length === 0 ? (
           <div className="p-12 text-center rounded-3xl bg-[#090b12] border border-white/10 space-y-4">
             <AlertCircle size={32} className="mx-auto text-zinc-500" />
-            <h3 className="font-heading font-bold text-lg text-white">No projects found</h3>
+            <h3 className="font-heading font-bold text-lg text-white">No repositories found</h3>
             <p className="text-xs font-mono text-zinc-400">
-              No repositories match your current filter or search query "{searchQuery}".
+              No repositories match your current filter or search query &quot;{searchQuery}&quot;.
             </p>
             <button
               onClick={() => {
@@ -135,123 +211,149 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
               }}
               className="px-4 py-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-xs font-mono border border-cyan-500/30 transition-all"
             >
-              Reset Filters & Show All
+              Reset Filters &amp; Show All
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, idx) => (
-                <motion.div
-                  key={project.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.3, delay: idx * 0.04 }}
-                  className="group relative bg-[#090b12] border border-white/10 hover:border-cyan-500/40 rounded-3xl p-8 sm:p-10 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)]"
-                >
-                  <div className="space-y-6">
-                    {/* Top Bar */}
-                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: project.accentColor || "#00D2FF" }}
-                        />
-                        <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest">
-                          {project.category}
-                        </span>
+              {filteredProjects.map((project, idx) => {
+                return (
+                  <motion.div
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.25, delay: idx * 0.02 }}
+                    onMouseMove={handleCardMouseMove}
+                    onClick={() => {
+                      sounds.playClick();
+                      onOpenProject(project);
+                    }}
+                    className="group relative bg-[#090b14]/90 hover:bg-[#0c0e1a] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_35px_-10px_rgba(0,210,255,0.2)] hover:-translate-y-1 cursor-pointer overflow-hidden"
+                  >
+                    {/* Cursor-Following Radial Spotlight Glow */}
+                    <div
+                      className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100"
+                      style={{
+                        background:
+                          "radial-gradient(320px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 210, 255, 0.12), transparent 80%)",
+                      }}
+                    />
+
+                    <div className="space-y-3.5 relative z-10">
+                      {/* Top Header: Category Tag & External Links */}
+                      <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="w-2 h-2 rounded-full shrink-0"
+                            style={{ backgroundColor: project.accentColor || "#00D2FF" }}
+                          />
+                          <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider truncate max-w-[150px]">
+                            {project.category}
+                          </span>
+                        </div>
+
+                        {/* Quick GitHub and Live Action Icons */}
+                        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                          <a
+                            href={project.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => sounds.playClick()}
+                            className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+                            aria-label={`GitHub repo for ${project.title}`}
+                            title="GitHub Repository"
+                          >
+                            <Github size={13} />
+                          </a>
+
+                          {project.liveUrl && (
+                            <a
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => sounds.playClick()}
+                              className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-cyan-400 hover:text-black text-cyan-400 transition-colors"
+                              aria-label={`Live demo for ${project.title}`}
+                              title="Live Demo"
+                            >
+                              <ExternalLink size={13} />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      <span className="font-mono text-xs text-zinc-600">
-                        {idx + 1 < 10 ? `0${idx + 1}` : idx + 1} / {filteredProjects.length < 10 ? `0${filteredProjects.length}` : filteredProjects.length}
+
+                      {/* Title & Tagline */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-lg font-heading font-extrabold text-white group-hover:text-cyan-400 transition-colors tracking-tight">
+                            {project.title}
+                          </h3>
+                          {project.featured && (
+                            <span className="inline-flex items-center gap-1 font-mono text-[9px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30 shrink-0">
+                              <Sparkles size={9} />
+                              <span>FEATURED</span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="font-mono text-[11px] text-zinc-400 line-clamp-1">
+                          {project.tagline}
+                        </p>
+                      </div>
+
+                      {/* Short Description (2 Lines) */}
+                      <p className="text-xs text-zinc-400 font-sans leading-relaxed line-clamp-2">
+                        {project.shortDescription}
+                      </p>
+
+                      {/* Tech Stack Pills (Compact) */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {project.techStack.slice(0, 4).map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/5 font-mono text-[10px] text-zinc-300 group-hover:border-cyan-500/20 transition-colors"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {project.techStack.length > 4 && (
+                          <span className="px-1.5 py-0.5 rounded-md bg-white/[0.02] font-mono text-[10px] text-zinc-500">
+                            +{project.techStack.length - 4}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Compact Card Footer */}
+                    <div className="pt-3.5 mt-3.5 border-t border-white/5 flex items-center justify-between relative z-10">
+                      <span className="font-mono text-[10px] text-zinc-500 flex items-center gap-1">
+                        <FolderGit2 size={11} className="text-zinc-500" />
+                        <span>{project.year}</span>
+                      </span>
+
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/10 group-hover:bg-cyan-400 group-hover:text-black text-cyan-400 font-mono text-[11px] font-semibold transition-all border border-cyan-500/30 shadow-[0_0_10px_rgba(0,210,255,0.1)]">
+                        <BookOpen size={11} />
+                        <span>Case Study</span>
+                        <ArrowUpRight size={11} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </span>
                     </div>
-
-                    {/* Title & Tagline */}
-                    <div className="space-y-2">
-                      <h3 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight group-hover:text-cyan-400 transition-colors">
-                        {project.title}
-                      </h3>
-                      <p className="font-mono text-xs text-zinc-400">
-                        {project.tagline}
-                      </p>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-sm text-zinc-300 font-sans leading-relaxed">
-                      {project.shortDescription}
-                    </p>
-
-                    {/* Stack Tags */}
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {project.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 rounded-md bg-white/[0.04] border border-white/5 font-mono text-[11px] text-zinc-300 group-hover:border-cyan-500/20 transition-colors"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card Footer Actions */}
-                  <div className="pt-8 mt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
-                    <button
-                      onClick={() => {
-                        sounds.playClick();
-                        onOpenProject(project);
-                      }}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 hover:bg-cyan-400 hover:text-black text-cyan-400 font-mono text-xs font-semibold border border-cyan-500/30 transition-all group/btn shadow-[0_0_15px_rgba(0,210,255,0.15)]"
-                    >
-                      <BookOpen size={14} />
-                      <span>View Architecture & Case Study</span>
-                      <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => sounds.playClick()}
-                        className="p-2.5 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-colors border border-white/5"
-                        aria-label={`GitHub repository for ${project.title}`}
-                        title="View GitHub Repository"
-                      >
-                        <Github size={16} />
-                      </a>
-
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => sounds.playClick()}
-                          className="p-2.5 rounded-full bg-white/5 hover:bg-cyan-400 hover:text-black text-zinc-400 transition-colors border border-white/5"
-                          aria-label={`Live demo for ${project.title}`}
-                          title="Open Verified Live App"
-                        >
-                          <ExternalLink size={16} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
 
         {/* 14 Repositories Verification Banner */}
-        <div className="p-8 rounded-3xl bg-[#080910] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="p-6 sm:p-8 rounded-2xl bg-[#080910] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h4 className="font-heading font-bold text-lg text-white">
-              All 14 open-source repositories audited & verifiable
+            <h4 className="font-heading font-bold text-base sm:text-lg text-white">
+              All 14 open-source repositories audited &amp; verifiable
             </h4>
             <p className="text-xs font-mono text-zinc-400">
-              Inspect test pipelines, schema migrations, and commit signatures.
+              Inspect test pipelines, schema migrations, and commit signatures on GitHub.
             </p>
           </div>
           <a
@@ -259,11 +361,11 @@ export default function ProjectsSection({ onOpenProject }: ProjectsSectionProps)
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => sounds.playClick()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/40 text-white font-mono text-xs transition-all shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/40 text-white font-mono text-xs transition-all shrink-0"
           >
-            <Github size={15} className="text-cyan-400" />
+            <Github size={14} className="text-cyan-400" />
             <span>github.com/Coderaryanyadav</span>
-            <ArrowUpRight size={14} className="text-zinc-500" />
+            <ArrowUpRight size={13} className="text-zinc-500" />
           </a>
         </div>
       </div>

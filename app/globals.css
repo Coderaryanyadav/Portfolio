@@ -18,17 +18,28 @@
 html {
   background-color: #050608;
   color: #ededed;
-  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
   text-rendering: optimizeSpeed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
 body {
   background-color: #050608;
   color: #ededed;
   overflow-x: hidden;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Production Focus Accessibility */
+:focus-visible {
+  outline: 2px solid #00d2ff;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* Custom Scrollbar */
@@ -509,26 +520,41 @@ body {
   position: absolute;
   z-index: 9;
   top: 50%;
-  right: 68%;
-  transform: translate(0%, -50%);
+  left: 3%;
+  transform: translateY(-50%);
   text-align: left;
+  max-width: 400px;
+}
+
+@media (min-width: 1280px) {
+  .landing-intro {
+    left: 4%;
+    max-width: 420px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .landing-intro {
+    left: 6%;
+    max-width: 440px;
+  }
 }
 
 .landing-intro h2 {
   margin: 0;
   color: #c2a4ff;
-  font-size: 24px;
-  font-weight: 300;
-  letter-spacing: 2px;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
   font-family: var(--font-space-grotesk), sans-serif;
   text-transform: uppercase;
 }
 
 .landing-intro h1 {
-  margin: 8px 0 0 0;
-  letter-spacing: 1px;
-  font-size: 64px;
-  line-height: 60px;
+  margin: 6px 0 0 0;
+  letter-spacing: -0.5px;
+  font-size: 50px;
+  line-height: 48px;
   font-weight: 800;
   font-family: var(--font-space-grotesk), sans-serif;
   color: #ffffff;
@@ -541,17 +567,32 @@ body {
 
 .landing-info {
   position: absolute;
-  top: 51%;
-  left: 68%;
-  transform: translate(0%, -50%);
+  top: 50%;
+  right: 3%;
+  transform: translateY(-50%);
   text-align: left;
   z-index: 9;
+  max-width: 400px;
+}
+
+@media (min-width: 1280px) {
+  .landing-info {
+    right: 4%;
+    max-width: 420px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .landing-info {
+    right: 6%;
+    max-width: 440px;
+  }
 }
 
 .landing-info h3 {
-  font-size: 24px;
-  letter-spacing: 2px;
-  font-weight: 300;
+  font-size: 18px;
+  letter-spacing: 2.5px;
+  font-weight: 400;
   color: #c2a4ff;
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
@@ -560,25 +601,25 @@ body {
 
 .landing-info-h2 {
   color: #c481ff;
-  font-size: 56px;
-  line-height: 54px;
-  margin: 8px 0 0 0;
+  font-size: 46px;
+  line-height: 44px;
+  margin: 6px 0 0 0;
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-shadow: 0 0 35px rgba(196, 129, 255, 0.45);
 }
 
 .landing-h2-info {
   color: #ffffff;
-  font-size: 56px;
-  line-height: 54px;
+  font-size: 46px;
+  line-height: 44px;
   margin: 4px 0 0 0;
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 /* Mobile & Tablet Overrides (<= 1024px) */
@@ -586,10 +627,10 @@ body {
   .landing-section {
     height: auto !important;
     min-height: 100vh;
-    padding: 90px 20px 40px;
+    padding: 100px 20px 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   .landing-container {
@@ -598,56 +639,51 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
+    justify-content: flex-end;
+    min-height: 65vh;
+    padding-bottom: 24px;
     margin: 0 auto;
+    position: relative;
   }
 
   .landing-intro {
     position: relative !important;
     top: auto !important;
+    left: auto !important;
     right: auto !important;
     transform: none !important;
     text-align: center;
-    margin-bottom: 24px;
+    margin: 0 auto;
     width: 100%;
+    max-width: 480px;
+    z-index: 10;
   }
 
   .landing-intro h2 {
-    font-size: 18px;
+    font-size: 16px;
+    letter-spacing: 2px;
   }
 
   .landing-intro h1 {
-    font-size: 42px;
-    line-height: 42px;
+    font-size: 44px;
+    line-height: 44px;
+  }
+
+  .landing-intro p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .landing-intro .flex {
+    justify-content: center;
   }
 
   .landing-info {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    text-align: center;
-    margin-top: 24px;
-    width: 100%;
-  }
-
-  .landing-info h3 {
-    font-size: 18px;
-  }
-
-  .landing-info-h2,
-  .landing-h2-info {
-    font-size: 36px;
-    line-height: 36px;
+    display: none !important;
   }
 
   .character-container {
-    position: relative !important;
-    width: 100% !important;
-    height: 48vh !important;
-    max-height: 420px;
-    margin: 0 auto;
-    z-index: 5 !important;
+    display: none !important;
   }
 }
 
@@ -682,13 +718,15 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 70%, transparent 98%);
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 98%);
 }
 
 .character-canvas-wrapper canvas {
   pointer-events: none;
 }
 
-/* Signature Ambient Rim Glow (Image 2) */
+/* Signature Ambient Rim Glow */
 .character-rim {
   position: absolute;
   width: 440px;
@@ -697,8 +735,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -46%) scale(1.35);
-  background: radial-gradient(circle, rgba(196, 129, 255, 0.45) 0%, rgba(0, 210, 255, 0.35) 45%, transparent 70%);
-  box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.22) 0%, rgba(14, 165, 233, 0.12) 45%, transparent 70%);
+  box-shadow: inset 40px 20px 60px 0px rgba(0, 180, 240, 0.20);
   filter: blur(55px);
   opacity: 0;
   z-index: 0;
@@ -726,27 +764,35 @@ body {
 .whatIDO {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between !important;
   position: relative;
   min-height: 100vh;
   width: 100%;
-  max-width: 1920px;
+  max-width: 1750px;
   margin: auto;
+  padding: 0 5% !important;
+  box-sizing: border-box;
   z-index: 12;
 }
 
 .what-box {
-  width: 50%;
   display: flex;
-  justify-content: center;
   position: relative;
   z-index: 12;
 }
 
-.what-box h2 {
-  font-size: calc(3.8vw + 24px);
-  line-height: calc(3.8vw + 18px);
-  margin-right: 12%;
+.what-box:first-child,
+.what-box-left {
+  width: auto !important;
+  max-width: 380px;
+  flex-shrink: 0;
+  padding-left: 0 !important;
+}
+
+.what-box:first-child h2 {
+  font-size: clamp(42px, 3.8vw, 64px);
+  line-height: clamp(42px, 3.8vw, 64px);
+  margin-right: 0;
 }
 
 .hat-h2 {
@@ -758,40 +804,64 @@ body {
   text-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
 }
 
+.what-box:last-child,
+.what-box-right {
+  width: auto !important;
+  margin-left: auto !important;
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
 .what-box-in {
   flex-direction: column;
-  height: 520px;
-  margin-left: 120px;
+  min-height: auto;
+  margin-left: 0 !important;
   position: relative;
   display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 440px;
+  max-width: 100%;
 }
 
 .what-content {
-  width: 460px;
-  height: 50%;
-  min-height: 50%;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 440px;
+  max-width: 100%;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  padding: 36px 44px;
+  padding: 18px 24px;
   box-sizing: border-box;
   cursor: pointer;
-  background: rgba(9, 11, 20, 0.45);
-  backdrop-filter: blur(8px);
+  background: rgba(9, 11, 20, 0.7);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
 }
 
 .what-noTouch:hover,
 .what-content-active {
-  min-height: 68%;
-  padding: 34px 44px;
-  background: rgba(9, 11, 20, 0.85);
+  background: rgba(9, 11, 20, 0.94);
+  border-color: rgba(0, 210, 255, 0.45);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.15);
 }
 
-.what-noTouch:hover ~ .what-content,
-.what-box-in:hover .what-noTouch:not(:hover),
 .what-content.what-sibling {
-  min-height: 32%;
-  padding: 16px 44px;
-  opacity: 0.65;
+  opacity: 0.6;
+  padding: 10px 20px;
+}
+
+.what-content.what-sibling:hover {
+  opacity: 0.95;
+  border-color: rgba(0, 210, 255, 0.3);
+}
+
+.what-content.what-sibling .what-body {
+  display: none !important;
+}
+
+.what-content.what-sibling .what-details {
+  display: none !important;
 }
 
 .what-content-in {
@@ -841,33 +911,7 @@ body {
   border-top: none;
 }
 
-.what-arrow {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
-  border: 1px solid rgba(0, 210, 255, 0.5);
-  border-radius: 4px;
-}
 
-.what-arrow::before {
-  content: "";
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  border-left: 2px solid #00d2ff;
-  border-bottom: 2px solid #00d2ff;
-  transition: transform 0.4s ease;
-  width: 8px;
-  height: 8px;
-}
-
-.what-noTouch:hover .what-arrow::before,
-.what-content-active .what-arrow::before {
-  transform: translate(-50%, -20%) rotate(-225deg);
-}
 
 .what-border1 {
   position: absolute;
@@ -931,40 +975,38 @@ body {
   color: #00d2ff;
 }
 
-/* Responsiveness */
+/* Responsiveness for What I Do */
 @media only screen and (max-width: 1024px) {
-  .character-container {
-    position: absolute;
-    height: 80vh;
-  }
   .whatIDO {
     height: auto;
-    padding: 60px 0;
-  }
-  .what-box-in {
-    margin-left: 0;
-    height: auto;
-  }
-  .what-content {
-    width: 100%;
-    max-width: 480px;
-    margin-bottom: 20px;
-  }
-}
-
-@media only screen and (max-width: 900px) {
-  .whatIDO {
+    min-height: auto;
+    padding: 80px 20px !important;
     flex-direction: column;
   }
   .what-box {
     width: 100%;
+    padding-left: 0;
     justify-content: flex-start;
   }
   .what-box h2 {
+    font-size: clamp(36px, 8vw, 48px);
+    line-height: clamp(36px, 8vw, 48px);
     margin-right: 0;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
   }
   .what-box-in {
     margin-left: 0;
+    min-height: auto;
+    width: 100%;
+    gap: 16px;
+  }
+  .what-content {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 24px;
+  }
+  .what-border1,
+  .what-border2 {
+    display: none !important;
   }
 }

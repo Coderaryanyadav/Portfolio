@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       email: email.trim().toLowerCase().slice(0, 150),
       message: message.trim().slice(0, 2000),
       timestamp: new Date().toISOString(),
-      recipient: "aryanyadav.dev@gmail.com",
+      recipient: "Aryanjyadav@gmail.com",
     };
 
     console.log("[INCOMING CONTACT INQUIRY]:", sanitized);

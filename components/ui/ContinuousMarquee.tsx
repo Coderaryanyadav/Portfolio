@@ -19,13 +19,13 @@ export default function ContinuousMarquee({
   const fullItems = [...items, ...items, ...items];
 
   return (
-    <div className={`overflow-hidden whitespace-nowrap flex select-none py-6 border-y border-white/5 bg-[#06070c] relative ${className}`}>
+    <div className={`overflow-hidden whitespace-nowrap flex select-none py-6 border-y border-white/5 bg-[#06070c] relative group hover:bg-[#070912] transition-colors ${className}`}>
       {/* Ambient gradient fade edges */}
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#050608] to-transparent z-10 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#050608] to-transparent z-10 pointer-events-none" />
 
       <div
-        className="flex shrink-0 items-center gap-12 font-heading font-extrabold text-2xl sm:text-4xl text-zinc-300 uppercase tracking-wider"
+        className="flex shrink-0 items-center gap-12 font-heading font-extrabold text-2xl sm:text-4xl text-zinc-300 uppercase tracking-wider group-hover:[animation-play-state:paused] will-change-transform transform-gpu"
         style={{
           animation: `marquee-scroll-${direction} ${speedSeconds}s linear infinite`,
         }}
@@ -40,7 +40,7 @@ export default function ContinuousMarquee({
 
       <div
         aria-hidden="true"
-        className="flex shrink-0 items-center gap-12 font-heading font-extrabold text-2xl sm:text-4xl text-zinc-300 uppercase tracking-wider"
+        className="flex shrink-0 items-center gap-12 font-heading font-extrabold text-2xl sm:text-4xl text-zinc-300 uppercase tracking-wider group-hover:[animation-play-state:paused] will-change-transform transform-gpu"
         style={{
           animation: `marquee-scroll-${direction} ${speedSeconds}s linear infinite`,
         }}

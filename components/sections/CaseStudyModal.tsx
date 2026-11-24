@@ -1,22 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Github, ExternalLink, ShieldCheck, Cpu, Code2, AlertTriangle, Lightbulb, Layers, Terminal, CheckCircle2 } from "lucide-react";
-import { Project } from "@/data/projects";
+import { X, Github, ExternalLink, ShieldCheck, Cpu, Code2, AlertTriangle, Lightbulb, Layers, Terminal, ChevronLeft, ChevronRight } from "lucide-react";
+import { PROJECTS, Project } from "@/data/projects";
 import { sounds } from "@/lib/sound";
 
 interface CaseStudyModalProps {
   project: Project | null;
   onClose: () => void;
+  onSelectProject?: (project: Project) => void;
 }
 
-export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
+export default function CaseStudyModal({ project, onClose, onSelectProject }: CaseStudyModalProps) {
   const [activeStep, setActiveStep] = useState(0);
+
+  const currentIndex = project ? PROJECTS.findIndex((p) => p.id === project.id) : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < PROJECTS.length - 1;
+
+  const handlePrev = useCallback(() => {
+    if (hasPrev && onSelectProject) {
+      sounds.playClick();
+      onSelectProject(PROJECTS[currentIndex - 1]);
+    }
+  }, [hasPrev, onSelectProject, currentIndex]);
+
+  const handleNext = useCallback(() => {
+    if (hasNext && onSelectProject) {
+      sounds.playClick();
+      onSelectProject(PROJECTS[currentIndex + 1]);
+    }
+  }, [hasNext, onSelectProject, currentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
     };
     if (project) {
       document.body.style.overflow = "hidden";
@@ -27,7 +48,7 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [project, onClose]);
+  }, [project, onClose, handlePrev, handleNext]);
 
   if (!project) return null;
 
@@ -62,20 +83,53 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: project.accentColor || "#00D2FF" }}
               />
-              <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest">
+              <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest hidden sm:inline">
                 Technical Case Study / {project.category}
               </span>
+              <span className="font-mono text-xs text-zinc-400 uppercase tracking-widest sm:hidden">
+                {project.category}
+              </span>
             </div>
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onClose();
-              }}
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
-              aria-label="Close modal"
-            >
-              <X size={18} />
-            </button>
+
+            <div className="flex items-center gap-2">
+              {/* Prev / Next Case Study Navigator */}
+              <div className="flex items-center gap-1 font-mono text-xs text-zinc-400 bg-white/[0.04] border border-white/10 px-2 py-1 rounded-full">
+                <button
+                  onClick={handlePrev}
+                  disabled={!hasPrev}
+                  className={`p-1 rounded-full transition-colors ${
+                    hasPrev ? "hover:bg-white/10 text-white" : "opacity-30 cursor-not-allowed"
+                  }`}
+                  title="Previous project (←)"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+                <span className="px-1 text-[11px] text-zinc-300">
+                  {currentIndex + 1} / {PROJECTS.length}
+                </span>
+                <button
+                  onClick={handleNext}
+                  disabled={!hasNext}
+                  className={`p-1 rounded-full transition-colors ${
+                    hasNext ? "hover:bg-white/10 text-white" : "opacity-30 cursor-not-allowed"
+                  }`}
+                  title="Next project (→)"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  onClose();
+                }}
+                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
+                aria-label="Close modal"
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           {/* Modal Content Scrollable Body */}
@@ -173,59 +227,81 @@ export default function CaseStudyModal({ project, onClose }: CaseStudyModalProps
               </div>
             </div>
 
-            {/* Interactive Architecture Flow Visualizer */}
+            {/* Interactive Architecture Topology & Flowchart */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 uppercase tracking-widest">
                   <Layers size={14} />
-                  <span>03. Architecture Topology & Execution Pipeline</span>
+                  <span>03. Architecture Topology &amp; Execution Pipeline</span>
                 </div>
-                <span className="text-[11px] font-mono text-zinc-500">
-                  Step {activeStep + 1} of {project.caseStudy.architecture.length}
+                <span className="text-[11px] font-mono text-cyan-400/80 bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded">
+                  Interactive Node Graph
                 </span>
               </div>
 
-              {/* Step Flow Tabs */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {project.caseStudy.architecture.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      sounds.playClick();
-                      setActiveStep(idx);
-                    }}
-                    className={`p-3 rounded-xl border text-left font-mono text-xs transition-all ${
-                      activeStep === idx
-                        ? "bg-cyan-500/15 border-cyan-400 text-cyan-300 shadow-[0_0_20px_rgba(0,210,255,0.25)] font-bold"
-                        : "bg-black/30 border-white/5 text-zinc-400 hover:text-white"
-                    }`}
-                  >
-                    <span className="block text-[10px] text-zinc-500">LAYER 0{idx + 1}</span>
-                    <span className="truncate block">Node {idx + 1}</span>
-                  </button>
-                ))}
-              </div>
+              {/* Visual Connected Architecture Flowchart Pipeline */}
+              <div className="p-4 sm:p-6 rounded-2xl bg-[#06070e] border border-cyan-500/30 space-y-5">
+                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 overflow-x-auto pb-2">
+                  {project.caseStudy.architecture.map((item, idx) => {
+                    const colonIndex = item.indexOf(":");
+                    const nodeLabel = colonIndex !== -1 ? item.substring(0, colonIndex).trim() : `Stage 0${idx + 1}`;
+                    const isCurrent = activeStep === idx;
+                    return (
+                      <div key={idx} className="flex-1 flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            sounds.playClick();
+                            setActiveStep(idx);
+                          }}
+                          className={`w-full p-3.5 rounded-xl border text-left transition-all relative ${
+                            isCurrent
+                              ? "bg-cyan-500/15 border-cyan-400 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
+                              : "bg-white/[0.02] border-white/10 hover:border-white/20 text-zinc-400 hover:text-white"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono text-[10px] text-zinc-500">
+                              NODE 0{idx + 1}
+                            </span>
+                            <span className={`w-2 h-2 rounded-full ${isCurrent ? "bg-cyan-400 animate-pulse" : "bg-zinc-700"}`} />
+                          </div>
+                          <span className={`block font-heading font-bold text-xs ${isCurrent ? "text-cyan-300" : "text-zinc-200"}`}>
+                            {nodeLabel}
+                          </span>
+                        </button>
 
-              {/* Active Step Highlight Card */}
-              <motion.div
-                key={activeStep}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="p-5 rounded-2xl bg-[#06070e] border border-cyan-500/25 flex items-start gap-4"
-              >
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center font-mono font-bold text-sm text-cyan-400 shrink-0">
-                  0{activeStep + 1}
+                        {idx < project.caseStudy.architecture.length - 1 && (
+                          <div className="hidden md:flex items-center text-zinc-600 font-mono text-xs px-1">
+                            →
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="space-y-1">
-                  <h4 className="font-heading font-bold text-sm text-white">
-                    Architectural Pipeline Step 0{activeStep + 1}
-                  </h4>
-                  <p className="text-sm text-zinc-300 font-sans leading-relaxed">
-                    {project.caseStudy.architecture[activeStep] || project.caseStudy.architecture[0]}
-                  </p>
-                </div>
-              </motion.div>
+
+                {/* Active Architecture Step Deep Dive */}
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-5 rounded-xl bg-black/60 border border-white/10 flex items-start gap-4"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center font-mono font-bold text-sm text-cyan-300 shrink-0 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
+                    0{activeStep + 1}
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-heading font-bold text-sm text-white flex items-center gap-2">
+                      <span>Node Topology Specification</span>
+                      <span className="text-zinc-500 text-xs font-mono font-normal">• Verified In Production</span>
+                    </h4>
+                    <p className="text-sm text-zinc-200 font-sans leading-relaxed">
+                      {project.caseStudy.architecture[activeStep] || project.caseStudy.architecture[0]}
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
             </div>
 
             {/* Verified Technology Stack */}
