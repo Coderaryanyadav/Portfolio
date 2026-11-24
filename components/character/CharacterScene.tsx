@@ -401,8 +401,14 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
                 if (modelEl) {
                   modelEl.style.opacity = "1";
                 }
-                if (monitorObject) monitorObject.visible = false;
-                if (screenLight) screenLight.visible = false;
+                if (monitorObject) {
+                  monitorObject.visible = false;
+                  monitorObject.scale.set(0.0001, 0.0001, 0.0001);
+                }
+                if (screenLight) {
+                  screenLight.visible = false;
+                  screenLight.scale.set(0.0001, 0.0001, 0.0001);
+                }
               },
               onEnterBack: () => {
                 const el = rootRef.current;
@@ -426,6 +432,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
                   screenLight.scale.set(0.0001, 0.0001, 0.0001);
                   screenLight.position.copy(initialScreenLightPos);
                 }
+                gsap.set(".what-box-left, .what-box-right", { opacity: 0, y: 40 });
                 const el = rootRef.current;
                 if (el) {
                   el.style.visibility = "visible";
@@ -440,8 +447,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             },
             onUpdate: function () {
               const p = this.progress();
-              // Screen strictly emerges LATER: only after Hero text has vanished and camera is wide (p >= 0.58)
-              const showMonitor = p >= 0.58;
+              // Screen emerges ONLY after camera has pulled back into workstation framing (p >= 0.60)
+              // This guarantees the monitor NEVER blocks the hero text or character face!
+              const showMonitor = p >= 0.60;
               if (monitorObject) {
                 monitorObject.visible = showMonitor;
               }
@@ -451,60 +459,59 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             },
           });
 
-          // 1. Hero text & bottom bar fade out smoothly in the first 35% of scroll
+          // 1. Hero text & bottom bar fade out smoothly in the first 25% of scroll
           heroToWorkstationTl
             .set(".landing-container", { pointerEvents: "auto" }, 0)
-            .to(".landing-container, .hero-bottom-bar", { opacity: 0, duration: 0.35, ease: "power1.inOut" }, 0)
-            .set(".landing-container", { pointerEvents: "none" }, 0.35)
-            .to(".landing-container", { y: "15%", duration: 0.45, ease: "power1.inOut" }, 0);
+            .to(".landing-container, .hero-bottom-bar", { opacity: 0, y: -20, duration: 0.22, ease: "power1.inOut" }, 0)
+            .set(".landing-container", { pointerEvents: "none" }, 0.22);
 
-          // 2. Camera pulls back smoothly and directly to workstation framing (z: 83.5, y: 8.7) - NO intermediate zoom, NO jumps!
+          // 2. Camera pulls back smoothly and directly to workstation framing (z: 83.5, y: 8.7)
           heroToWorkstationTl
-            .fromTo(camera.position, { z: 26.5, y: 13.0 }, { z: 83.5, y: 8.7, duration: 1, ease: "power2.inOut" }, 0)
-            .fromTo(char.rotation, { y: 0, x: 0 }, { y: 0.95, x: 0.10, duration: 1, ease: "power2.inOut" }, 0)
-            .fromTo(".character-model", { x: "0%" }, { x: "-9%", duration: 1, ease: "power2.inOut" }, 0);
+            .fromTo(camera.position, { z: 26.5, y: 13.0 }, { z: 83.5, y: 8.7, duration: 0.65, ease: "power2.inOut" }, 0)
+            .fromTo(char.rotation, { y: 0, x: 0 }, { y: 0.95, x: 0.10, duration: 0.65, ease: "power2.inOut" }, 0)
+            .fromTo(".character-model", { x: "0%" }, { x: "-9%", duration: 0.65, ease: "power2.inOut" }, 0);
 
           if (neckBone) {
-            heroToWorkstationTl.to(neckBone.rotation, { x: 0.6, duration: 1, ease: "power2.inOut" }, 0);
+            heroToWorkstationTl.to(neckBone.rotation, { x: 0.6, duration: 0.65, ease: "power2.inOut" }, 0);
           }
 
-          // 3. Monitor & screenlight materialize with a sleek landing onto the desk (NEVER under the desk!)
+          // 3. What I Do text & cards rise up smoothly as soon as hero fades (zero blank void!)
+          heroToWorkstationTl
+            .fromTo(
+              ".what-box-left, .what-box-right",
+              { opacity: 0, y: 40 },
+              { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+              0.20
+            );
+
+          // 4. Monitor & screenlight materialize seamlessly ON TOP OF THE DESK (starts at 0.60, once camera is wide)
+          // Its position is permanently anchored to initialMonitorPos so it NEVER drops below the tabletop!
           if (monitorObject && initialMonitorPos) {
+            monitorObject.position.copy(initialMonitorPos);
             heroToWorkstationTl
-              .fromTo(
-                monitorObject.position,
-                { y: initialMonitorPos.y + 1.2 },
-                { y: initialMonitorPos.y, duration: 0.22, ease: "power2.out" },
-                0.58
-              )
               .fromTo(
                 monitorObject.scale,
                 { x: 0.0001, y: 0.0001, z: 0.0001 },
-                { x: 1, y: 1, z: 1, duration: 0.22, ease: "back.out(1.15)" },
-                0.58
+                { x: 1, y: 1, z: 1, duration: 0.22, ease: "power2.out" },
+                0.60
               );
           }
 
           if (screenLight && initialScreenLightPos) {
+            screenLight.position.copy(initialScreenLightPos);
             heroToWorkstationTl
-              .fromTo(
-                screenLight.position,
-                { y: initialScreenLightPos.y + 1.2 },
-                { y: initialScreenLightPos.y, duration: 0.22, ease: "power2.out" },
-                0.58
-              )
               .fromTo(
                 screenLight.scale,
                 { x: 0.0001, y: 0.0001, z: 0.0001 },
-                { x: 1, y: 1, z: 1, duration: 0.22, ease: "back.out(1.15)" },
-                0.58
+                { x: 1, y: 1, z: 1, duration: 0.22, ease: "power2.out" },
+                0.60
               );
           }
 
           heroToWorkstationTl.fromTo(
             ".character-rim",
             { opacity: 0.9, scale: 1.3 },
-            { opacity: 0, scale: 0, y: "-70%", duration: 0.8 },
+            { opacity: 0, scale: 0, y: "-70%", duration: 0.6 },
             0
           );
 

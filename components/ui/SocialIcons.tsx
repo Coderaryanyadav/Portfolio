@@ -10,7 +10,7 @@ interface SocialIconsProps {
   onOpenResume?: () => void;
 }
 
-export default function SocialIcons(_props: SocialIconsProps) {
+export default function SocialIcons({ onOpenResume: _onOpenResume }: SocialIconsProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

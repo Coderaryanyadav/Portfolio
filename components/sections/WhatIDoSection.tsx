@@ -67,7 +67,7 @@ export default function WhatIDoSection() {
   };
 
   return (
-    <section id="what-i-do" className="relative min-h-screen z-10 flex items-center pt-24 lg:pt-28 pb-16 scroll-mt-20">
+    <section id="what-i-do" className="relative min-h-screen z-10 flex items-center pt-20 lg:pt-24 pb-16 scroll-mt-20">
       {/* Anchor for in-page navigation to #about */}
       <span id="about" className="absolute -top-24 pointer-events-none" />
 
