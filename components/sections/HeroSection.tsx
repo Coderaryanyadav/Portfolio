@@ -17,7 +17,7 @@ export default function HeroSection() {
   useEffect(() => {
     const timer = setInterval(() => {
       setTitleIdx((prev) => (prev + 1) % ROTATING_TITLES.length);
-    }, 3200);
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
@@ -62,15 +62,15 @@ export default function HeroSection() {
         </div>
 
         {/* Dynamic Rotating Engineering Pillars */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#090b14]/90 border border-cyan-500/25 w-full shadow-[0_0_30px_rgba(0,210,255,0.06)] min-h-[135px] flex flex-col justify-center overflow-hidden">
-          <AnimatePresence mode="wait">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#090b14]/90 border border-cyan-500/25 w-full shadow-[0_0_30px_rgba(0,210,255,0.06)] min-h-[135px] flex flex-col justify-center overflow-hidden relative">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={titleIdx}
-              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-1"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="space-y-1 w-full"
             >
               <span className="text-cyan-400 font-mono text-xs uppercase tracking-wider block">
                 {ROTATING_TITLES[titleIdx].prefix}
@@ -175,17 +175,21 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right Column: High-Conviction Engineering Pillars */}
-        <div className="landing-info pointer-events-auto">
-          <div className="min-h-[145px] flex flex-col justify-center">
-            <AnimatePresence mode="wait">
+        {/* Right Column: High-Conviction Engineering Pillars with Organic Floating Drift */}
+        <motion.div
+          animate={{ y: ["-50%", "calc(-50% - 6px)", "-50%"] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+          className="landing-info pointer-events-auto"
+        >
+          <div className="min-h-[145px] flex flex-col justify-center relative overflow-hidden">
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={titleIdx}
-                initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
-                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                className="space-y-1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-1 w-full"
               >
                 <h3 className="text-cyan-400 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
@@ -210,7 +214,7 @@ export default function HeroSection() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span>Sub-50ms Spatial GIS • Production Flutter &amp; Next.js 15</span>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Bottom telemetry footer with safe side padding to avoid floating icon collision */}

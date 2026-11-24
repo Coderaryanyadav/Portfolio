@@ -33,8 +33,8 @@ export default function SocialIcons(_props: SocialIconsProps = {}) {
       let animId: number;
 
       const updatePos = () => {
-        currentX += (mouseX - currentX) * 0.16;
-        currentY += (mouseY - currentY) * 0.16;
+        currentX += (mouseX - currentX) * 0.11;
+        currentY += (mouseY - currentY) * 0.11;
         link.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
         animId = requestAnimationFrame(updatePos);
       };

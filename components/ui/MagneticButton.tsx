@@ -38,7 +38,7 @@ export default function MagneticButton({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 250, damping: 20, mass: 0.3 }}
+      transition={{ type: "spring", stiffness: 180, damping: 18, mass: 0.25 }}
       className={cn("relative inline-flex items-center justify-center", className)}
       {...props}
     >
