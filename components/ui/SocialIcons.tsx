@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Github, Linkedin, FileText } from "lucide-react";
+import { Github, Linkedin, Download } from "lucide-react";
 import HoverLink from "./HoverLink";
 import { PERSONAL } from "@/data/personal";
+import { sounds } from "@/lib/sound";
 
 interface SocialIconsProps {
   onOpenResume?: () => void;
 }
 
-export default function SocialIcons({ onOpenResume }: SocialIconsProps) {
+export default function SocialIcons(_props: SocialIconsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -102,15 +103,20 @@ export default function SocialIcons({ onOpenResume }: SocialIconsProps) {
           </div>
         </div>
 
-        {/* Right Side: Resume Quick Pill (Permanently hovering on screen across all sections) */}
+        {/* Right Side: Direct Resume PDF Download Pill (Permanently hovering on screen across all sections) */}
         <div className="pointer-events-auto">
-          <button
-            onClick={() => onOpenResume?.()}
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="Aryan_Yadav_Resume.pdf"
+            onClick={() => sounds.playClick()}
             className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#080912]/85 backdrop-blur-md border border-white/10 hover:border-cyan-400 text-zinc-300 hover:text-cyan-400 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,210,255,0.3)] cursor-pointer"
+            title="Download Aryan's Resume (PDF)"
           >
             <HoverLink text="RESUME" className="text-xs font-mono font-bold tracking-[0.2em]" />
-            <FileText size={14} className="text-zinc-400 group-hover:text-cyan-400 transition-colors" />
-          </button>
+            <Download size={13} className="text-zinc-400 group-hover:text-cyan-400 transition-colors" />
+          </a>
         </div>
       </div>
     </aside>

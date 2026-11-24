@@ -7,8 +7,8 @@ import HoverLink from "../ui/HoverLink";
 import { sounds } from "@/lib/sound";
 
 const NAV_ITEMS = [
-  { label: "WHAT I DO", href: "#what-i-do" },
   { label: "ABOUT", href: "#about" },
+  { label: "WHAT I DO", href: "#what-i-do" },
   { label: "WORK", href: "#projects" },
   { label: "SKILLS", href: "#skills" },
   { label: "JOURNEY", href: "#journey" },
