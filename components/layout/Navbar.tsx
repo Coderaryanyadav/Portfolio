@@ -8,7 +8,6 @@ import { sounds } from "@/lib/sound";
 
 const NAV_ITEMS = [
   { label: "ABOUT", href: "#about" },
-  { label: "WHAT I DO", href: "#what-i-do" },
   { label: "WORK", href: "#projects" },
   { label: "SKILLS", href: "#skills" },
   { label: "JOURNEY", href: "#journey" },
@@ -41,7 +40,7 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i]);
         if (el && el.offsetTop <= scrollPosition) {
-          if (sections[i] === "what-i-do" && window.location.hash === "#about") {
+          if (sections[i] === "what-i-do") {
             setActiveSection("about");
           } else {
             setActiveSection(sections[i]);
