@@ -447,9 +447,9 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
             },
             onUpdate: function () {
               const p = this.progress();
-              // Screen emerges ONLY after camera has pulled back into workstation framing (p >= 0.60)
-              // This guarantees the monitor NEVER blocks the hero text or character face!
-              const showMonitor = p >= 0.60;
+              // Screen emerges smoothly in tandem with the desk (starts at p >= 0.08 as hero text fades)
+              // This guarantees the computer arrives naturally with the table, with ZERO sudden popping!
+              const showMonitor = p >= 0.08;
               if (monitorObject) {
                 monitorObject.visible = showMonitor;
               }
@@ -484,27 +484,37 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
               0.20
             );
 
-          // 4. Monitor & screenlight materialize seamlessly ON TOP OF THE DESK (starts at 0.60, once camera is wide)
-          // Its position is permanently anchored to initialMonitorPos so it NEVER drops below the tabletop!
+          // 4. Monitor & screenlight materialize seamlessly WITH THE TABLE (starts at 0.10, full by 0.52)
+          // Rises and scales in fluid lockstep as the desk turns into frame, eliminating any sudden pop!
           if (monitorObject && initialMonitorPos) {
-            monitorObject.position.copy(initialMonitorPos);
             heroToWorkstationTl
               .fromTo(
                 monitorObject.scale,
                 { x: 0.0001, y: 0.0001, z: 0.0001 },
-                { x: 1, y: 1, z: 1, duration: 0.22, ease: "power2.out" },
-                0.60
+                { x: 1, y: 1, z: 1, duration: 0.45, ease: "power2.out" },
+                0.10
+              )
+              .fromTo(
+                monitorObject.position,
+                { x: initialMonitorPos.x, y: initialMonitorPos.y - 1.2, z: initialMonitorPos.z },
+                { x: initialMonitorPos.x, y: initialMonitorPos.y, z: initialMonitorPos.z, duration: 0.45, ease: "power2.out" },
+                0.10
               );
           }
 
           if (screenLight && initialScreenLightPos) {
-            screenLight.position.copy(initialScreenLightPos);
             heroToWorkstationTl
               .fromTo(
                 screenLight.scale,
                 { x: 0.0001, y: 0.0001, z: 0.0001 },
-                { x: 1, y: 1, z: 1, duration: 0.22, ease: "power2.out" },
-                0.60
+                { x: 1, y: 1, z: 1, duration: 0.45, ease: "power2.out" },
+                0.10
+              )
+              .fromTo(
+                screenLight.position,
+                { x: initialScreenLightPos.x, y: initialScreenLightPos.y - 1.2, z: initialScreenLightPos.z },
+                { x: initialScreenLightPos.x, y: initialScreenLightPos.y, z: initialScreenLightPos.z, duration: 0.45, ease: "power2.out" },
+                0.10
               );
           }
 
