@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Github, Linkedin, Download } from "lucide-react";
 import HoverLink from "./HoverLink";
 import { PERSONAL } from "@/data/personal";
@@ -13,6 +13,15 @@ interface SocialIconsProps {
 export default function SocialIcons(_props: SocialIconsProps = {}) {
   void _props;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [scrolledPastHero, setScrolledPastHero] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolledPastHero(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -74,7 +83,11 @@ export default function SocialIcons(_props: SocialIconsProps = {}) {
   return (
     <aside
       aria-label="Social media and resume links"
-      className="fixed bottom-0 left-0 right-0 z-30 max-w-[1920px] mx-auto px-6 sm:px-10 pb-6 hidden md:block pointer-events-none opacity-100 translate-y-0 transition-opacity duration-300"
+      className={`fixed bottom-0 left-0 right-0 z-30 max-w-[1920px] mx-auto px-6 sm:px-10 pb-6 hidden md:block transition-all duration-500 ease-out ${
+        scrolledPastHero
+          ? "opacity-0 translate-y-8 pointer-events-none"
+          : "opacity-100 translate-y-0 pointer-events-none"
+      }`}
     >
       <div ref={containerRef} className="relative w-full flex items-center justify-between">
         {/* Left Side: Magnetic Social Links (Permanently hovering on screen across all sections) */}

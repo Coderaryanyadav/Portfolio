@@ -63,21 +63,58 @@ export default function CommandPalette({
           <div><button onClick={() => executeCommand("projects")} className="text-cyan-400 font-bold hover:underline">projects</button> : List all 14 audited repositories</div>
           <div><button onClick={() => executeCommand("skills")} className="text-cyan-400 font-bold hover:underline">skills</button> : Inspect technical ecosystem</div>
           <div><button onClick={() => executeCommand("whoami")} className="text-cyan-400 font-bold hover:underline">whoami</button> : Display Aryan&apos;s bio</div>
-          <div><button onClick={() => executeCommand("resume")} className="text-cyan-400 font-bold hover:underline">resume / cv (r)</button> : View Curriculum Vitae</div>
+          <div><button onClick={() => executeCommand("education")} className="text-cyan-400 font-bold hover:underline">education</button> : View Diploma &amp; Academic background</div>
+          <div><button onClick={() => executeCommand("certs")} className="text-cyan-400 font-bold hover:underline">certs</button> : Technical certifications</div>
+          <div><button onClick={() => executeCommand("resume")} className="text-cyan-400 font-bold hover:underline">resume / cv (r)</button> : View interactive Resume</div>
+          <div><button onClick={() => executeCommand("download")} className="text-cyan-400 font-bold hover:underline">download</button> : Download PDF Resume directly</div>
           <div><button onClick={() => executeCommand("contact")} className="text-cyan-400 font-bold hover:underline">contact (c)</button> : Direct communication channels</div>
           <div><span className="text-cyan-400 font-bold">1 - 6</span> : Jump to section #1-#6</div>
           <div><button onClick={() => executeCommand("github")} className="text-cyan-400 font-bold hover:underline">github</button> : Open GitHub profile</div>
-          <div><span className="text-cyan-400 font-bold">open &lt;name&gt;</span> : Launch project case study</div>
           <div><button onClick={() => executeCommand("clear")} className="text-cyan-400 font-bold hover:underline">clear</button> : Wipe terminal buffer</div>
         </div>
       );
     } else if (clean === "whoami") {
       resultNode = (
         <div className="space-y-1 text-xs text-zinc-300">
-          <p><strong className="text-cyan-400">Aryan Yadav</strong> — Software Engineer based in Mumbai, India</p>
+          <p><strong className="text-cyan-400">Aryan Yadav</strong> — IT Student &amp; Software Engineer based in Mumbai, India</p>
           <p className="text-zinc-400">{PERSONAL.aboutDetailed}</p>
         </div>
       );
+    } else if (clean === "education" || clean === "edu") {
+      resultNode = (
+        <div className="space-y-2 text-xs text-zinc-300 font-mono">
+          <p className="text-cyan-400 font-bold">Academic Background:</p>
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <p className="text-white font-bold">Diploma in Information Technology</p>
+            <p className="text-zinc-400 text-[11px]">Shri Bhagubhai Mafatlal Polytechnic, Mumbai (2024–2027)</p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <p className="text-white font-bold">Secondary School Certificate (CBSE) — 88%</p>
+            <p className="text-zinc-400 text-[11px]">Podar International School</p>
+          </div>
+        </div>
+      );
+    } else if (clean === "certs" || clean === "certifications") {
+      resultNode = (
+        <div className="space-y-2 text-xs text-zinc-300 font-mono">
+          <p className="text-cyan-400 font-bold">Verified Technical Certifications:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {PERSONAL.certifications?.map((c) => (
+              <div key={c} className="p-2 rounded bg-white/5 border border-white/5 text-zinc-300">
+                • {c}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else if (clean === "download" || clean === "download resume") {
+      const a = document.createElement("a");
+      a.href = "/Aryan_Yadav_Resume.pdf";
+      a.download = "Aryan_Yadav_Resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      resultNode = <span className="text-emerald-400">Initiated direct download: Aryan_Yadav_Resume.pdf</span>;
     } else if (clean === "resume" || clean === "cv" || clean === "r") {
       onOpenResume?.();
       onClose();
@@ -214,7 +251,7 @@ export default function CommandPalette({
 
           {/* Quick Command Chips */}
           <div className="px-5 py-2 border-b border-white/5 bg-white/[0.01] flex flex-wrap gap-1.5 text-[11px]">
-            {["projects", "skills", "whoami", "resume", "contact", "clear"].map((cmd) => (
+            {["projects", "skills", "whoami", "education", "certs", "download", "clear"].map((cmd) => (
               <button
                 key={cmd}
                 onClick={() => executeCommand(cmd)}
@@ -226,7 +263,7 @@ export default function CommandPalette({
           </div>
 
           {/* Terminal Output */}
-          <div data-lenis-prevent="true" className="p-5 max-h-80 overflow-y-auto space-y-4 text-xs">
+          <div data-lenis-prevent="true" className="p-5 max-h-[55vh] sm:max-h-80 overflow-y-auto space-y-4 text-xs">
             {history.map((h, i) => (
               <div key={i} className="space-y-1.5">
                 <div className="flex items-center gap-2 text-cyan-400">

@@ -26,17 +26,17 @@ export default function HeroSection() {
       id="hero"
       className="landing-section relative min-h-screen w-full flex flex-col justify-between overflow-hidden"
     >
-      {/* Top telemetry bar */}
-      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 pt-24 pb-4 hidden md:flex items-center justify-between font-mono text-xs text-zinc-400 relative z-20 pointer-events-none">
+      {/* Top telemetry bar (Desktop Only >= 1024px to prevent duplicate badge on tablet) */}
+      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 pt-24 pb-4 hidden lg:flex items-center justify-between font-mono text-xs text-zinc-400 relative z-20 pointer-events-none">
         <div className="flex items-center gap-3 pointer-events-auto">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
           <span className="text-zinc-300 font-medium tracking-wide">
-            AVAILABLE FOR PRODUCTION & HIGH-STAKES ARCHITECTURE
+            AVAILABLE FOR PRODUCTION &amp; HIGH-STAKES ARCHITECTURE
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-6 text-[11px] text-zinc-400 pointer-events-auto">
           <span className="inline-flex items-center gap-1.5">
-            <Cpu size={12} className="text-cyan-400" /> Offline AI & RAG
+            <Cpu size={12} className="text-cyan-400" /> Offline AI &amp; RAG
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Shield size={12} className="text-cyan-400" /> Cybersecurity
@@ -65,7 +65,7 @@ export default function HeroSection() {
         <div className="p-4 sm:p-5 rounded-2xl bg-[#090b14]/90 border border-cyan-500/25 w-full shadow-[0_0_30px_rgba(0,210,255,0.06)] flex flex-col justify-center relative">
           <div className="flex flex-col items-center justify-center space-y-1.5">
             {/* Category Slot */}
-            <div className="h-5 overflow-hidden relative w-full flex justify-center">
+            <div className="h-6 overflow-hidden relative w-full flex justify-center">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={titleIdx}
@@ -73,7 +73,7 @@ export default function HeroSection() {
                   animate={{ y: "0%", opacity: 1 }}
                   exit={{ y: "-100%", opacity: 0 }}
                   transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
-                  className="h-5 flex items-center justify-center"
+                  className="h-6 flex items-center justify-center"
                 >
                   <span className="text-cyan-400 font-mono text-xs uppercase tracking-wider block">
                     {ROTATING_TITLES[titleIdx].prefix}
@@ -83,7 +83,7 @@ export default function HeroSection() {
             </div>
 
             {/* Top Headline Slot */}
-            <div className="h-8 sm:h-9 overflow-hidden relative w-full flex justify-center">
+            <div className="h-9 sm:h-10 overflow-hidden relative w-full flex justify-center">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={titleIdx}
@@ -91,7 +91,7 @@ export default function HeroSection() {
                   animate={{ y: "0%", opacity: 1 }}
                   exit={{ y: "-100%", opacity: 0 }}
                   transition={{ duration: 0.56, delay: 0.03, ease: [0.16, 1, 0.3, 1] }}
-                  className="h-8 sm:h-9 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-[#c481ff] whitespace-nowrap"
+                  className="h-9 sm:h-10 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-[#c481ff] whitespace-nowrap leading-none"
                 >
                   {ROTATING_TITLES[titleIdx].top}
                 </motion.div>
@@ -99,7 +99,7 @@ export default function HeroSection() {
             </div>
 
             {/* Bottom Headline Slot */}
-            <div className="h-8 sm:h-9 overflow-hidden relative w-full flex justify-center">
+            <div className="h-9 sm:h-10 overflow-hidden relative w-full flex justify-center">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                   key={titleIdx}
@@ -107,7 +107,7 @@ export default function HeroSection() {
                   animate={{ y: "0%", opacity: 1 }}
                   exit={{ y: "-100%", opacity: 0 }}
                   transition={{ duration: 0.58, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                  className="h-8 sm:h-9 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-white whitespace-nowrap"
+                  className="h-9 sm:h-10 flex items-center justify-center text-xl sm:text-2xl font-heading font-extrabold text-white whitespace-nowrap leading-none"
                 >
                   {ROTATING_TITLES[titleIdx].bottom}
                 </motion.div>

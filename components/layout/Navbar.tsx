@@ -90,8 +90,8 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
             </span>
           </a>
 
-          {/* Center: Desktop Nav Links with Moncy.dev HoverLinks Flip Effect */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#090b14]/80 backdrop-blur-md border border-white/10 px-2 py-1.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          {/* Center: Desktop Nav Links with Moncy.dev HoverLinks Flip Effect & Sliding Active Spring */}
+          <nav className="hidden md:flex items-center gap-1 bg-[#090b14]/80 backdrop-blur-md border border-white/10 px-2 py-1.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] relative">
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.href.substring(1);
               return (
@@ -99,13 +99,22 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => sounds.playClick()}
-                  className={`px-3 py-1 text-xs font-mono tracking-wider transition-all rounded-full whitespace-nowrap ${
+                  className={`relative px-3.5 py-1 text-xs font-mono tracking-wider transition-colors rounded-full whitespace-nowrap ${
                     isActive
-                      ? "text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 shadow-[0_0_12px_rgba(0,210,255,0.15)] font-bold"
-                      : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                      ? "text-cyan-400 font-bold"
+                      : "text-zinc-400 hover:text-white"
                   }`}
                 >
-                  <HoverLink text={item.label} />
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      className="absolute inset-0 rounded-full bg-cyan-500/15 border border-cyan-500/40 shadow-[0_0_15px_rgba(0,210,255,0.25)]"
+                    />
+                  )}
+                  <span className="relative z-10">
+                    <HoverLink text={item.label} />
+                  </span>
                 </a>
               );
             })}

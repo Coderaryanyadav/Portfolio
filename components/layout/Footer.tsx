@@ -47,7 +47,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16 pb-28 sm:pb-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Brand & Identity */}
           <div className="md:col-span-5 space-y-4">
