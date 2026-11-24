@@ -55,7 +55,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             </div>
             <div className="flex items-center gap-2">
               <a
-                href="/resume.pdf"
+                href="/Resume.pdf"
                 download="Aryan_Yadav_Resume.pdf"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 hover:text-white text-xs font-mono transition-all font-bold shadow-[0_0_15px_rgba(0,210,255,0.2)]"
                 title="Download Aryan's Resume (PDF)"

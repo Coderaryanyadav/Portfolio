@@ -128,7 +128,7 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
 
             {/* Direct Resume PDF Download Pill */}
             <a
-              href="/resume.pdf"
+              href="/Resume.pdf"
               download="Aryan_Yadav_Resume.pdf"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-xs font-mono text-cyan-300 hover:text-white transition-all cursor-pointer font-bold whitespace-nowrap"
               title="Download Resume (PDF)"
@@ -180,7 +180,7 @@ export default function Navbar({ onOpenTerminal, onOpenResume }: NavbarProps) {
 
             <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
               <a
-                href="/resume.pdf"
+                href="/Resume.pdf"
                 download="Aryan_Yadav_Resume.pdf"
                 onClick={() => {
                   sounds.playClick();

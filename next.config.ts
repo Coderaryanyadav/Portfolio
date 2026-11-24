@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/resume.pdf",
+        destination: "/Resume.pdf",
+      },
+      {
+        source: "/Aryan_Yadav_Resume.pdf",
+        destination: "/Resume.pdf",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

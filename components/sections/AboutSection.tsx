@@ -100,7 +100,7 @@ export default function AboutSection() {
           <div className="pt-2 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2.5">
               <a
-                href="/resume.pdf"
+                href="/Resume.pdf"
                 download="Aryan_Yadav_Resume.pdf"
                 onClick={() => sounds.playClick()}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-heading font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(0,210,255,0.3)]"

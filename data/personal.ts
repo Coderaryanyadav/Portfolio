@@ -11,7 +11,7 @@ export const PERSONAL = {
   timezone: "Asia/Kolkata",
   email: "Aryanjyadav@gmail.com",
   phone: "+91 8828095997",
-  resumeUrl: "/resume.pdf",
+  resumeUrl: "/Resume.pdf",
   calUrl: "https://cal.com/aryan-yadav-xaktmv/15min",
   recruiterSnapshot: {
     targetRoles: [

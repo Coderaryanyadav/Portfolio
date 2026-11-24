@@ -130,7 +130,7 @@ export default function HeroSection() {
           </a>
 
           <a
-            href="/resume.pdf"
+            href="/Resume.pdf"
             download="Aryan_Yadav_Resume.pdf"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-heading font-bold text-xs uppercase tracking-wider"
           >
@@ -184,7 +184,7 @@ export default function HeroSection() {
 
             <MagneticButton>
               <a
-                href="/resume.pdf"
+                href="/Resume.pdf"
                 download="Aryan_Yadav_Resume.pdf"
                 className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-300 font-heading font-bold text-xs uppercase tracking-wider hover:bg-cyan-500/20 hover:text-white transition-all shadow-[0_0_15px_rgba(0,210,255,0.15)]"
                 title="Download Aryan's Resume (PDF)"

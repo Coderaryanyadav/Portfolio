@@ -107,7 +107,7 @@ export default function SocialIcons(_props: SocialIconsProps = {}) {
         {/* Right Side: Direct Resume PDF Download Pill (Permanently hovering on screen across all sections) */}
         <div className="pointer-events-auto">
           <a
-            href="/resume.pdf"
+            href="/Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             download="Aryan_Yadav_Resume.pdf"

@@ -17,7 +17,7 @@ export default function MobileQuickDock({ onOpenTerminal }: MobileQuickDockProps
     >
       {/* 1. Direct PDF Resume Download */}
       <a
-        href="/resume.pdf"
+        href="/Resume.pdf"
         download="Aryan_Yadav_Resume.pdf"
         onClick={() => sounds.playClick()}
         className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full bg-cyan-400 text-black font-heading font-bold text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(0,210,255,0.3)] transition-transform active:scale-95"
