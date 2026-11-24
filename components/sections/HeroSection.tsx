@@ -230,7 +230,7 @@ export default function HeroSection() {
               </div>
 
               {/* Main Headline Top Line */}
-              <div className="h-[52px] overflow-hidden relative">
+              <div className="h-10 xl:h-[52px] overflow-hidden relative">
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.h2
                     key={titleIdx}
@@ -238,7 +238,7 @@ export default function HeroSection() {
                     animate={{ y: "0%", opacity: 1 }}
                     exit={{ y: "-100%", opacity: 0 }}
                     transition={{ duration: 0.56, delay: 0.03, ease: [0.16, 1, 0.3, 1] }}
-                    className="landing-info-h2 whitespace-nowrap h-[52px] flex items-center"
+                    className="landing-info-h2 whitespace-nowrap h-10 xl:h-[52px] flex items-center"
                   >
                     {ROTATING_TITLES[titleIdx].top}
                   </motion.h2>
@@ -246,7 +246,7 @@ export default function HeroSection() {
               </div>
 
               {/* Main Headline Bottom Line */}
-              <div className="h-[52px] overflow-hidden relative">
+              <div className="h-10 xl:h-[52px] overflow-hidden relative">
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.h2
                     key={titleIdx}
@@ -254,7 +254,7 @@ export default function HeroSection() {
                     animate={{ y: "0%", opacity: 1 }}
                     exit={{ y: "-100%", opacity: 0 }}
                     transition={{ duration: 0.58, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                    className="landing-h2-info whitespace-nowrap h-[52px] flex items-center"
+                    className="landing-h2-info whitespace-nowrap h-10 xl:h-[52px] flex items-center"
                   >
                     {ROTATING_TITLES[titleIdx].bottom}
                   </motion.h2>
