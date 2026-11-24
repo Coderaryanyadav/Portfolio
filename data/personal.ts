@@ -5,7 +5,7 @@ export const PERSONAL = {
   shortBio:
     "I'm an IT student and developer passionate about building intelligent software, exploring cybersecurity, and turning complex ideas into practical products.",
   aboutDetailed:
-    "I'm Aryan Yadav, an Information Technology student interested in software development, cybersecurity, artificial intelligence and the systems behind modern technology. I enjoy understanding how things work internally, experimenting with new technologies, solving engineering problems and building applications that address practical challenges. My projects span financial auditing, AI-powered applications, blockchain verification, mobile applications, real-time systems and secure communication.",
+    "Information Technology diploma student and software developer focused on building practical software products and AI-powered applications. Experienced in developing projects involving full-stack web development, backend APIs, local AI workflows, document processing, and secure application design. Proficient in working with Python, TypeScript, FastAPI, React, SQL databases, and modern development tools. Passionate about software architecture, problem-solving, and building reliable applications that address real-world challenges.",
   statusText: "AVAILABLE FOR INTERNSHIPS & OPPORTUNITIES",
   location: "Mumbai, India",
   timezone: "Asia/Kolkata",
@@ -29,6 +29,14 @@ export const PERSONAL = {
     graduationYear: "2024–2027 (Expected)",
     primaryStack: ["Python", "FastAPI", "React / Next.js", "TypeScript", "SQLite", "PostgreSQL"],
   },
+  certifications: [
+    "Python Pro Bootcamp",
+    "The Web Developer Bootcamp 2026",
+    "Beginning C++ Programming",
+    "Learn Java Programming",
+    "Complete Networking Fundamentals — CCNA Start",
+    "CompTIA A+ Core 1 (220-1201)",
+  ],
   links: {
     github: "https://github.com/Coderaryanyadav",
     linkedin: "https://www.linkedin.com/in/aryanjyadav/",
