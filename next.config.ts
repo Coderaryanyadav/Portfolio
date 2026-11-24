@@ -17,12 +17,12 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/resume.pdf",
-        destination: "/Resume.pdf",
+        source: "/Resume.pdf",
+        destination: "/Aryan_Yadav_Resume.pdf",
       },
       {
-        source: "/Aryan_Yadav_Resume.pdf",
-        destination: "/Resume.pdf",
+        source: "/resume.pdf",
+        destination: "/Aryan_Yadav_Resume.pdf",
       },
     ];
   },
