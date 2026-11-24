@@ -48,9 +48,12 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       } else {
         current = 100;
         clearInterval(interval);
+        setPercent(100);
+        setIsLoaded(true);
+        // Automatically enter experience as soon as 100% is reached
         setTimeout(() => {
-          setIsLoaded(true);
-        }, 200);
+          triggerEnter();
+        }, 300);
       }
       setPercent(Math.min(current, 100));
     }, 32);
@@ -165,7 +168,7 @@ export default function MoncyLoader({ onComplete }: MoncyLoaderProps) {
       {/* Bottom Hint */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11px] text-zinc-500 uppercase tracking-widest flex items-center gap-2">
         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-        <span>{isLoaded ? "CLICK PILL OR PRESS ENTER TO EXPLORE" : "INITIALIZING SYSTEMS"}</span>
+        <span>{isLoaded ? "ENTERING EXPERIENCE..." : "INITIALIZING SYSTEMS"}</span>
       </div>
     </div>
   );
