@@ -52,7 +52,8 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Initial Camera Setup - perfectly framed bust view with ample breathing space
+    // Initial Camera Setup - adaptive distance based on screen width for clean text clearance
+    const initialZ = isDesktopView ? (width < 1280 ? 30.5 : 26.5) : 29.0;
     const camera = new THREE.PerspectiveCamera(
       isDesktopView ? 13.5 : 16.0,
       aspect,
@@ -60,10 +61,10 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
       1000
     );
     if (isDesktopView) {
-      camera.position.set(0, 13.0, 26.5);
+      camera.position.set(0, 13.0, initialZ);
       camera.zoom = 1.0;
     } else {
-      camera.position.set(0, 13.8, 29.0);
+      camera.position.set(0, 13.8, initialZ);
       camera.zoom = 0.95;
     }
     camera.updateProjectionMatrix();
@@ -471,7 +472,7 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
 
           // 2. Camera pulls back smoothly and directly to workstation framing (z: 83.5, y: 8.7)
           heroToWorkstationTl
-            .fromTo(camera.position, { z: 26.5, y: 13.0 }, { z: 83.5, y: 8.7, duration: 0.65, ease: "power2.inOut" }, 0)
+            .fromTo(camera.position, { z: initialZ, y: 13.0 }, { z: 83.5, y: 8.7, duration: 0.65, ease: "power2.inOut" }, 0)
             .fromTo(char.rotation, { y: 0, x: 0 }, { y: 0.95, x: 0.10, duration: 0.65, ease: "power2.inOut" }, 0)
             .fromTo(".character-model", { x: "0%" }, { x: "-9%", duration: 0.65, ease: "power2.inOut" }, 0);
 
@@ -664,14 +665,14 @@ export default function CharacterScene({ onLoaded, className = "" }: CharacterSc
     // Resize Handler
     const handleWindowResize = () => {
       if (!mountRef.current) return;
-      const desktop = window.innerWidth > 1024;
+      const desktop = window.innerWidth >= 1024;
 
       width = desktop ? window.innerWidth : mountRef.current.clientWidth || window.innerWidth;
       height = desktop ? window.innerHeight : mountRef.current.clientHeight || 450;
       aspect = width / height;
 
       camera.aspect = aspect;
-      camera.fov = desktop ? 14.5 : 16.5;
+      camera.fov = desktop ? 13.5 : 16.0;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       ScrollTrigger.refresh();
